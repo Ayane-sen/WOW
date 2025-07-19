@@ -17,6 +17,7 @@ export default function Home() {
         />
 
         <p>これはWOWうさぎです。</p>
+        <p>みちみちin</p>
       </main>
     </div>
   );
