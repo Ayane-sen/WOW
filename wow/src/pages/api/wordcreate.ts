@@ -1,0 +1,52 @@
+import { PrismaClient } from "@/generated/prisma";
+import type { NextApiRequest, NextApiResponse } from "next";
+
+const prisma = new PrismaClient();
+// BigIntをJSONでシリアライズするためのヘルパー関数
+function serializeBigInt(obj: any): any {
+  if (typeof obj === "bigint") {
+    return obj.toString();
+  } else if (Array.isArray(obj)) {
+    return obj.map(serializeBigInt);
+  } else if (obj && typeof obj === "object") {
+    const result: any = {};
+    for (const [key, value] of Object.entries(obj)) {
+      result[key] = serializeBigInt(value);
+    }
+    return result;
+  } else {
+    return obj;
+  }
+}
+
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    if(req.method === "POST") {
+        // リクエストボディから 'word' と 'meaning' を取得
+        const{ word, meaning } = req.body;
+
+        if(!word || !meaning) {
+            return res.status(400).json({ error: "単語と意味は必須です。" });
+        }
+        try{
+            const newWord=await prisma.word.create({
+                data:{
+                    word: word,
+                    meaning: meaning,
+                },
+            });
+            console.log("word added:", newWord);
+
+            return res.status(201).json(serializeBigInt(newWord)); // 成功した場合は201ステータスコードと新しい単語を返す
+
+        }catch(error) {
+            console.error("Error adding word:", error);
+            // エラーが発生した場合は500エラーを返す
+            return res.status(500).json({ error: "単語の追加に失敗しました。" });
+        }
+    }else{
+        res.setHeader("Allow", "POST");
+        // メソッドがPOST以外の場合は405エラーを返す
+        return res.status(405).json({ error: "Method Not Allowed" });
+    }
+}
