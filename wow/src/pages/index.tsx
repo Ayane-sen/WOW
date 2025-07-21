@@ -18,6 +18,7 @@ export default function Home() {
 
         <p>これはWOWうさぎです。</p>
         <p>みちみちin</p>
+        <a href="/create">新しい単語を追加</a>
       </main>
     </div>
   );
