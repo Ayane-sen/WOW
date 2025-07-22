@@ -9,63 +9,61 @@ datasource db {
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-//単語テーブル
 model Word {
-  id      Int  @id @default(autoincrement()) @map("word_id")
-  word    String
-  meaning String
+  id              Int           @id @default(autoincrement()) @map("word_id")
+  word            String
+  meaning         String
   difficultyLevel Int?
-  userId Int? @map("user_id")
+  userId          Int?          @map("user_id")
   quizHistories   QuizHistory[]
+  user            User?         @relation(fields: [userId], references: [id])
 
-  user User? @relation(fields: [userId],references: [id])
+  @@map("words")
+}
 
-  @@map("words") //データベース上のテーブル名
-  }
-//ユーザー情報
-model User{
-  id Int @id @default(autoincrement()) @map("user_id")
-  username String @unique
-  email String @unique
-  passwordHash String @map("password_hash")
-  userCharacter UserCharacter?
-  words Word[]//ユーザーが追加した単語
+model User {
+  id            Int            @id @default(autoincrement()) @map("user_id")
+  username      String         @unique
+  email         String         @unique
+  passwordHash  String         @map("password_hash")
+  createdAt     DateTime       @default(now()) @map("created_at")
   quizHistories QuizHistory[]
-  createdAt DateTime @default(now()) @map("created_at")
+  userCharacter UserCharacter?
+  words         Word[]
+
   @@map("users")
 }
-//ユーザーごとのキャラクター情報
-model UserCharacter{
-  userId Int @id @map("user_id")
-  level Int @default(1) @map("current_level")
-  experience Int @default(0) @map("current_experience")
-  lastUpdated DateTime @map("last_updated") @default(now()) @updatedAt //更新時に自動で設定
 
-  user User @relation(fields: [userId],references:[id])
+model UserCharacter {
+  userId      Int      @id @map("user_id")
+  level       Int      @default(1) @map("current_level")
+  experience  Int      @default(0) @map("current_experience")
+  lastUpdated DateTime @default(now()) @updatedAt @map("last_updated")
+  user        User     @relation(fields: [userId], references: [id])
+
   @@map("user_characters")
 }
-//レベルごとのキャラのステータス
-model LevelStatus{
-  level Int @id
-  requiredExperience Int @map("required_experience")
-  characterImage String @map("character_image")
-  attackPower Int @map("attack_power")
-  defensePower Int @map("defense_power")
-  skillUnlocked String? @map("skill_unlocked")
-  hp Int
+
+model LevelStatus {
+  level              Int     @id
+  requiredExperience Int     @map("required_experience")
+  characterImage     String  @map("character_image")
+  attackPower        Int     @map("attack_power")
+  defensePower       Int     @map("defense_power")
+  skillUnlocked      String? @map("skill_unlocked")
+  hp                 Int
 
   @@map("level_statuses")
 }
-//問題解答履歴
-model QuizHistory{
-  id Int @id @default(autoincrement())
-  userId Int @map("user_id")
-  wordId Int @map("word_id")
-  isCorrect Boolean @map("is_correct")
-  answeredAt DateTime @default(now()) @map("answered_at")
 
-  user        User     @relation(fields: [userId], references: [id])
-  word        Word     @relation(fields: [wordId], references: [id])
+model QuizHistory {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  wordId     Int      @map("word_id")
+  isCorrect  Boolean  @map("is_correct")
+  answeredAt DateTime @default(now()) @map("answered_at")
+  user       User     @relation(fields: [userId], references: [id])
+  word       Word     @relation(fields: [wordId], references: [id])
 
   @@map("quiz_histories")
 }
