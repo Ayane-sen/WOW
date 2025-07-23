@@ -1,24 +1,25 @@
 import Image from "next/image";
+import Head from "next/head";
 import styles from "./index.module.css";
 
 
 export default function Home() {
   return (
-    <div className={styles.index}>
-      <main className={styles.main}>
-        <h1>WOW</h1>
+    <>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>WOW</title>
+      </Head>
 
-        {/*GIF画像を表示（優先度指定しない） */}
-        <img
-          src="/ハッカソンsmpl.gif"
-          alt="WOW GIF"
-          width={400}
-          height={300}
-        />
+      <div className={styles.index}>
+        <main className={styles.main}>
+          <h1>WOW</h1>
 
-        <p>これはWOWうさぎです。</p>
-        <p>みちみちin</p>
-      </main>
-    </div>
+          {/*GIF画像を表示（優先度指定しない） */}
+          
+          
+        </main>
+      </div>
+    </>
   );
 }
