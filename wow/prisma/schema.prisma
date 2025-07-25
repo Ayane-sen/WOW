@@ -67,3 +67,9 @@ model QuizHistory {
 
   @@map("quiz_histories")
 }
+model Experience{
+  difficultyLevel Int @id
+  getexperience Int     @map("get_experience")
+
+  @@map("experience")
+}
