@@ -13,7 +13,7 @@ model Word {
   id              Int           @id @default(autoincrement()) @map("word_id")
   word            String
   meaning         String
-  difficultyLevel Int?
+  difficultyLevel Int          @default(1)
   userId          Int?          @map("user_id")
   quizHistories   QuizHistory[]
   user            User?         @relation(fields: [userId], references: [id])
