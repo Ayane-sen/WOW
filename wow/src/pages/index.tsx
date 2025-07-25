@@ -19,6 +19,7 @@ export default function Home() {
         <p>これはWOWうさぎです。</p>
         <p>みちみちin</p>
         <a href="/create">新しい単語を追加</a>
+        <a href="/question">問題を解く</a>
       </main>
     </div>
   );
