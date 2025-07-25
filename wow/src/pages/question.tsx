@@ -6,6 +6,7 @@ interface QuizData {
     question: string;// 問題文
     options: string[];// 選択肢の配列
     correctAnswer: string;// 正解の単語
+    difficultyLevel: number;// 難易度レベル
 }
 
 const QuizPage: React.FC=()=>{
@@ -14,6 +15,7 @@ const QuizPage: React.FC=()=>{
     const [quiz,setQuiz]=useState<QuizData[]|null>(null);// 現在のクイズデータの状態
     const [currentQuizIndex,setCurrentQuizIndex]=useState(0);// 現在のクイズのインデックス
     const [correctCount,setCorrectCount]=useState(0);// 正解の数
+    const [correctDifficulties,setCorrectDifficulties]=useState<number[]>([]);// 正解の難易度レベルの配列
     const [quizFinished,setQuizFinished]=useState(false);// クイズが終了したかどうか
     const [selectedAnswer,setSelectedAnswer]=useState<string|null>(null);// ユーザーが選択した答え
     const [feedback,setFeedback]=useState<string|null>(null);// ユーザーへのフィードバックメッセージ
@@ -30,6 +32,7 @@ const QuizPage: React.FC=()=>{
         setQuizFinished(false);// クイズ終了状態をリセット
         setCorrectCount(0);// 正解数をリセット
         setDebugMessage(null);// デバッグメッセージをリセット
+        setCorrectDifficulties([]);// 正解の難易度レベルをリセット
 
         try{
             const response=await fetch(window.location.origin+'/api/question');// APIからクイズデータを取得(絶対パスで指定)
@@ -58,7 +61,13 @@ const QuizPage: React.FC=()=>{
         const currentQuiz=quiz?.[currentQuizIndex];// 現在のクイズを取得
         if(currentQuiz && answer===currentQuiz.correctAnswer){
             setFeedback("正解です！");// 正解の場合のフィードバック
-            setCorrectCount(correctCount+1);// 正解数を増やす
+            setCorrectCount(prevCount=>{
+                const newCount = prevCount + 1;
+                if(currentQuiz.difficultyLevel!== undefined){
+                    setCorrectDifficulties(prevDifficulties=>[...prevDifficulties, currentQuiz.difficultyLevel!]);// 正解の難易度レベルを追加
+                }
+                return newCount;
+            });// 正解数を増やす
         }else{
             setFeedback("不正解です。正しい答えは「" + currentQuiz?.correctAnswer + "」です。");// 不正解の場合のフィードバック
         }
@@ -75,7 +84,7 @@ const QuizPage: React.FC=()=>{
             //ここで経験値を加算するAPIを呼ぶ
             router.push({
                 pathname: '/result', // 結果ページにリダイレクト
-                query: { correctCount: correctCount, total: quiz?.length || 0}, // クエリパラメータで正解数と総問題数を渡す
+                query: { correctCount: correctCount, total: quiz?.length || 0,correctDifficulties:JSON.stringify(correctDifficulties)}, // クエリパラメータで正解数と総問題数を渡す
             })
         }
     };

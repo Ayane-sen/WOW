@@ -14,26 +14,41 @@ export default async function handler(
   }
 
   // リクエストボディを取得 (req.body を使用)
-  const { userId, difficultyLevel } = req.body;
+  const { userId, correctDifficulties } = req.body;
 
-  if (!userId || typeof difficultyLevel !== 'number') {
+  if (!userId || !Array.isArray(correctDifficulties)) {
     return res.status(400).json({ error: 'Invalid input' });
+  }
+  // correctDifficulties配列内の各要素が数値であることを確認
+  if (correctDifficulties.some((d: any) => typeof d !== 'number')) {
+    return res.status(400).json({ error: 'Invalid input: All elements in correctDifficulties must be numbers.' });
   }
 
   try {
     const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      // 英単語の難易度に応じた経験値を取得
-      const expSetting = await tx.experience.findUnique({
-        where: { difficultyLevel: difficultyLevel },
-      });
+      let totalExperienceGained = 0;// 経験値の合計を初期化
+      // 重複する難易度レベルがあるかもしれないので、Setでユニーク化
+      const uniqueDifficulties = [...new Set(correctDifficulties)];
+      if (uniqueDifficulties.length > 0) {
+        // 英単語の難易度に応じた経験値を取得
+        const expSetting = await tx.experience.findMany({
+          where: { difficultyLevel: { in: uniqueDifficulties } },
+        });
+        //経験値の合計
+        for(const difficulty of correctDifficulties){
+          const setting = expSetting.find(s => s.difficultyLevel === difficulty);
+          if (setting) {
+            totalExperienceGained += setting.getexperience;
+          }else{
+            console.error(`Experience setting for difficulty level ${difficulty} not found.`);
+            return res.status(404).json({ error: `Experience setting for difficulty level ${difficulty} not found.` });
+          }
+        }
 
-      // 設定が見つからない場合はエラー
-      if (!expSetting) {
-        throw new Error(`Experience setting for difficulty level ${difficultyLevel} not found.`);
+      }else{
+        console.log("No correct answers provided, total experience gained is 0.");
       }
-
-      const experienceGained = expSetting.getexperience;
-
+          
       // 現在のユーザー進捗を取得
       let userCharacter = await tx.userCharacter.findUnique({
         where: { userId },
@@ -44,7 +59,7 @@ export default async function handler(
       }
 
       // 経験値加算
-      const newExperience = userCharacter.experience + experienceGained;
+      const newExperience = userCharacter.experience + totalExperienceGained;
 
       // レベルアップ判定
       const potentialNextLevels = await tx.levelStatus.findMany({
@@ -79,7 +94,7 @@ export default async function handler(
         },
       });
 
-      return { ...updatedProgress, leveledUp, newCharacterImage };
+      return { ...updatedProgress, leveledUp, newCharacterImage, totalExperienceGained };
     });
 
     // res オブジェクトを使ってレスポンスを返す
