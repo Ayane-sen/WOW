@@ -1,0 +1,11 @@
+### 経験値を加算する
+POST http://localhost:3000/api/exp_status
+Content-Type: application/json
+
+{
+  "userId": 3,
+  "difficultyLevel": 4
+}
+
+### ユーザーのステータスを取得する
+GET http://localhost:3000/api/3/getstatus
