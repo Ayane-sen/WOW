@@ -1,6 +1,9 @@
 import { PrismaClient } from '../src/generated/prisma';
 import * as bcrypt from 'bcryptjs' // パスワードハッシュ化ライブラリ
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 // Prisma Clientのインスタンスを作成
 const prisma = new PrismaClient();
 
