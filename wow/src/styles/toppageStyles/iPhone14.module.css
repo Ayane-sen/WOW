@@ -1,0 +1,63 @@
+/* iPhone14 390×844 */
+@media(min-width: 390px) and (min-height: 844px){
+  
+
+  .background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background-image: url("../../../public/images/宇宙船iPhone14.png");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+
+  .index {
+    --gray-rgb: 0, 0, 0;
+    --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
+    --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
+
+    --button-primary-hover: #383838;
+    --button-secondary-hover: #f2f2f2;
+
+    display: grid;
+    grid-template-rows: 20px 1fr 20px;
+    align-items: center;
+    justify-items: center;
+    min-height: 100svh;
+    padding: 80px;
+    gap: 64px;
+    font-family: var(--font-geist-sans);
+  }
+
+
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    grid-row-start: 2;
+
+  }
+  .imageWrapper{
+    position: relative;
+    width: clamp(140px, 35vw, 260px);
+    height: auto;
+  }
+  .character{/*キャラクターの調整*/
+    object-fit: contain;
+  }
+  @media (max-width: 400px) {
+    .index {
+      padding: 40px;
+      gap: 32px;
+    }
+
+    .imageWrapper {
+      width: 200px;
+      height: 200px;
+    }
+  }
+}

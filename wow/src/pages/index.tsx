@@ -1,6 +1,11 @@
+/*npm install clsxが必要 */
+
 import Image from "next/image";
 import Head from "next/head";
-import styles from "./index.module.css";
+import clsx from "clsx";
+
+import baseStyles from "../styles/toppageStyles/index.module.css";
+import mobileStyles from "../styles/toppageStyles/iPhone14.module.css";
 
 
 export default function Home() {
@@ -10,15 +15,21 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>WOW</title>
       </Head>
-
-      <div className={styles.index}>
-        <main className={styles.main}>
-          <h1>WOW</h1>
-
-          {/*GIF画像を表示（優先度指定しない） */}
-          
-          
-        </main>
+      <div className= {clsx(mobileStyles.background)}>
+        <div className={clsx(baseStyles.index, mobileStyles.index)}>
+        
+          <main className={clsx(baseStyles.main, mobileStyles.main)}>
+            
+            <div className={clsx(baseStyles.imageWrapper, mobileStyles.imageWrapper)}>
+              <img
+                src="/images/宇宙人ピンク.gif"
+                alt="宇宙のキャラクター"
+                className={clsx(baseStyles.character, mobileStyles.character)}
+              />
+            </div>
+            
+          </main>
+        </div>
       </div>
     </>
   );
