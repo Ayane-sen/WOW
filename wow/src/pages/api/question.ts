@@ -82,6 +82,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 usedCorrectWordIds.add(correctWord.id);// 正解の単語を使用済みに追加
                 const question=correctWord.meaning// クイズの質問は単語の意味
                 const correctAnswer=correctWord.word;// 正解の単語
+                const difficultyLevel=correctWord.difficultyLevel;// 難易度レベル
                 
                 const otherWords=allWords.filter(word=>word.id!==correctWord.id);
                 if(otherWords.length<3){
@@ -111,6 +112,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     question: question,
                     options: options,
                     correctAnswer: correctAnswer,
+                    difficultyLevel: difficultyLevel,
                 }));
             }
                 return res.status(200).json(quizzes);// すべてのクイズを返す
