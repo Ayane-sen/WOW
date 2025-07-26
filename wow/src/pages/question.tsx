@@ -1,8 +1,5 @@
 import React,{useState,useEffect} from 'react';
 import {useRouter} from 'next/router';
-import Button from '../components/Button/Button';
-import styles from '../styles/QuizPage.module.css';
-import { useSession, signIn } from 'next-auth/react';
 
 //クイズデータ型の定義
 interface QuizData {
@@ -12,83 +9,51 @@ interface QuizData {
     difficultyLevel: number;// 難易度レベル
 }
 
-const QuizPage: React.FC = () => {
-    const router = useRouter(); // Next.jsのルーターを使用
-    const { data: session, status } = useSession();
-     const [characterImageUrl, setCharacterImageUrl] = useState<string | null>(null);
+const QuizPage: React.FC=()=>{
+    const router=useRouter();// Next.jsのルーターを使用
 
-    const [quiz, setQuiz] = useState<QuizData[] | null>(null); // 現在のクイズデータの状態
-    const [currentQuizIndex, setCurrentQuizIndex] = useState(0); // 現在のクイズのインデックス
-    const [correctCount, setCorrectCount] = useState(0); // 正解の数
-    const [correctDifficulties, setCorrectDifficulties] = useState<number[]>([]); // 正解の難易度レベルの配列
-    const [quizFinished, setQuizFinished] = useState(false); // クイズが終了したかどうか
-    const [selectedAnswer, setSelectedAnswer] = useState<string|null>(null); // ユーザーが選択した答え
-    const [feedback, setFeedback] = useState<string|null>(null); // ユーザーへのフィードバックメッセージ
-    const [isLoading, setIsLoading] = useState<boolean>(true); // ローディング状態の管理
-    const [error, setError] = useState<string|null>(null); // エラーメッセージの状態
-    const [debugMessage, setDebugMessage] = useState<string|null>(null); // デバッグメッセージの状態
-    
-    
+    const [quiz,setQuiz]=useState<QuizData[]|null>(null);// 現在のクイズデータの状態
+    const [currentQuizIndex,setCurrentQuizIndex]=useState(0);// 現在のクイズのインデックス
+    const [correctCount,setCorrectCount]=useState(0);// 正解の数
+    const [correctDifficulties,setCorrectDifficulties]=useState<number[]>([]);// 正解の難易度レベルの配列
+    const [quizFinished,setQuizFinished]=useState(false);// クイズが終了したかどうか
+    const [selectedAnswer,setSelectedAnswer]=useState<string|null>(null);// ユーザーが選択した答え
+    const [feedback,setFeedback]=useState<string|null>(null);// ユーザーへのフィードバックメッセージ
+    const [isLoading,setIsLoading]=useState<boolean>(true);// ローディング状態の管理
+    const [error,setError]=useState<string|null>(null);// エラーメッセージの状態
+    const [debugMessage,setDebugMessage]=useState<string|null>(null);// デバッグメッセージの状態
+    // クイズデータを取得する関数
+    const fetchQuiz=async()=>{
+        setIsLoading(true);// ローディング状態を開始
+        setFeedback(null);// フィードバックをリセット
+        setSelectedAnswer(null);// 選択した答えをリセット
+        setError(null);// エラーをリセット
+        setCurrentQuizIndex(0);// クイズのインデックスをリセット
+        setQuizFinished(false);// クイズ終了状態をリセット
+        setCorrectCount(0);// 正解数をリセット
+        setDebugMessage(null);// デバッグメッセージをリセット
+        setCorrectDifficulties([]);// 正解の難易度レベルをリセット
 
+        try{
+            const response=await fetch(window.location.origin+'/api/question');// APIからクイズデータを取得(絶対パスで指定)
+            if(!response.ok){
+                const errorData=await response.json();
+                throw new Error(errorData.error || "クイズデータの取得に失敗しました。");
+            }
+            const data: QuizData[]=await response.json();
+            setQuiz(data);// 取得したクイズデータを状態に設定
+        }catch(err:any){
+            console.error("Error fetching quiz:", err);
+            setError(err.message || "クイズの読み込み中にエラーが発生しました。");
+            setDebugMessage(`Error fetching quiz: ${err.message}`);// デバッグメッセージを設定
+        }finally{
+            setIsLoading(false);// ローディング状態を終了
+        }
+    };
     //コンポーネントがマウントされたときに一度だけクイズをフェッチ
-    useEffect(() => {
-        if (status === 'loading') {
-            return; // セッション情報取得中は待機
-        }
-        if (status === 'unauthenticated') {
-            router.push('/login'); // ログインしていなければログインページへ
-        }
-        if (status === 'authenticated' && session) {
-            // クイズデータを取得する関数
-            const fetchData = async() => {
-                setIsLoading(true); // ローディング状態を開始
-                setFeedback(null); // フィードバックをリセット
-                setSelectedAnswer(null); // 選択した答えをリセット
-                setError(null); // エラーをリセット
-                setCurrentQuizIndex(0); // クイズのインデックスをリセット
-                setQuizFinished(false); // クイズ終了状態をリセット
-                setCorrectCount(0); // 正解数をリセット
-                setDebugMessage(null); // デバッグメッセージをリセット
-                setCorrectDifficulties([]); // 正解の難易度レベルをリセット
-
-                try {
-                    const userId = session.user.id;
-
-                    // APIからクイズデータとステータス情報を取得
-                    const [quizResponse, statusResponse] = await Promise.all([
-                        fetch('/api/question', { credentials: 'include' }),
-                        fetch(`/api/user/${userId}/gamestatus`, { credentials: 'include' })
-                    ]); 
-                    
-                    // クイズデータの管理
-                    if (!quizResponse.ok) {
-                        const errorData = await quizResponse.json();
-                        throw new Error(errorData.error || "クイズデータの取得に失敗しました。");
-                    }
-                    const data: QuizData[] = await quizResponse.json();
-                    setQuiz(data); // 取得したクイズデータを状態に設定
-
-                    // ステータスデータの処理
-                    if (statusResponse.ok) {
-                        const statusData = await statusResponse.json();
-                        if (statusData?.status?.characterImage) {
-                            setCharacterImageUrl(statusData.status.characterImage);
-                        }
-                    } else {
-                        console.error("キャラクター情報の取得に失敗しました。");
-                    }
-                } catch(err: any) {
-                    console.error("Error fetching quiz:", err);
-                    setError(err.message || "クイズの読み込み中にエラーが発生しました。");
-                    setDebugMessage(`Error fetching quiz: ${err.message}`); // デバッグメッセージを設定
-                } finally {
-                    setIsLoading(false); // ローディング状態を終了
-                }
-            };
-
-            fetchData();
-        }
-    }, [status, session, router]);
+    useEffect(()=>{
+        fetchQuiz();
+    },[]);
 
     const handleAnswerSelect=(answer:string)=>{
         if(selectedAnswer)return; // 既に選択されている場合は何もしない
@@ -156,12 +121,6 @@ const QuizPage: React.FC = () => {
             {feedback && <p>{feedback}</p>} {/* フィードバックメッセージの表示 */}
             {selectedAnswer && (
                 <button onClick={handleNextQuiz}>次のクイズへ</button> // 次のクイズへ進むボタン
-            )}
-            {/* キャラクター画像を追加 */}
-            {characterImageUrl && (
-                <div style={{ position: 'fixed', bottom: '20px', left: '50%', transform: 'translateX(-50%)' }}>
-                    <img src={characterImageUrl} alt="キャラクター" width="100" height="100" />
-                </div>
             )}
         </div>
     )
