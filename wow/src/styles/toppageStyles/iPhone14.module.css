@@ -2,7 +2,104 @@
 @media(min-width: 390px) and (min-height: 844px){
   
 
-  .background {
+  .backgroundSpace {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+
+    background-image: url("../../../public/images/色付き星.png"),
+                      url("../../../public/images/空.png");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+  }
+
+  .whiteStars{
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+
+    background-image: url("../../../public/images/白い星.png");
+    background-size: auto 100%; /* 横に繰り返すので横サイズ自動 */
+    background-position: 0 0;
+    background-repeat: repeat-x;
+    animation: moveStars 5s linear infinite;
+  }
+
+  .planet{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    animation: float 10s ease-in-out infinite alternate, spin 60s linear infinite;
+
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+
+  .Earth{
+    background-image: url("../../../public/images/地球.png");
+  }
+
+  .Sun{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+
+    background-image: url("../../../public/images/太陽.png");
+
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+  }
+
+  .Jupiter{
+    background-image: url("../../../public/images/木星.png");
+  }
+
+  .Mars{
+    background-image: url("../../../public/images/火星.png");
+  }
+
+  @keyframes moveStars {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: -100vw 0; /* 好きな動きに調整 */
+    }
+  }
+
+  @keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+    .backgroundShip {
     position: fixed;
     top: 0;
     left: 0;
