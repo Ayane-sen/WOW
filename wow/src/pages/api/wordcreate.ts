@@ -23,21 +23,32 @@ function serializeBigInt(obj: any): any {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if(req.method === "POST") {
         // リクエストボディから 'word' と 'meaning' を取得
-        const{ word, meaning } = req.body;
+        const{ word, meaning, difficultLevel } = req.body;
 
         if(!word || !meaning) {
             return res.status(400).json({ error: "単語と意味は必須です。" });
         }
+        if(difficultLevel < 1 || difficultLevel > 5) {
+            return res.status(400).json({ error: "難易度は1から5の範囲で指定してください。" });
+        }
         try{
-            const newWord=await prisma.word.create({
-                data:{
-                    word: word,
-                    meaning: meaning,
-                },
-            });
-            console.log("word added:", newWord);
+          //サンプルユーザーの情報を取得
+          const sampleUser=await prisma.user.findFirst();
+          if(!sampleUser){
+            console.error("Sample user not found");
+            return res.status(404).json({ error: "サンプルユーザーが見つかりません。" });
+          }
+          const newWord=await prisma.word.create({
+              data:{
+                  word: word,
+                  meaning: meaning,
+                  difficultyLevel: difficultLevel, // 難易度を保存
+                  userId: sampleUser.id, // サンプルユーザーのIDを使用
+              },
+          });
+          console.log("word added:", newWord);
 
-            return res.status(201).json(serializeBigInt(newWord)); // 成功した場合は201ステータスコードと新しい単語を返す
+          return res.status(201).json(serializeBigInt(newWord)); // 成功した場合は201ステータスコードと新しい単語を返す
 
         }catch(error) {
             console.error("Error adding word:", error);

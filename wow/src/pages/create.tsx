@@ -5,6 +5,8 @@ const CreateWordPage: React.FC = () => {
     const [word, setWord] = useState("");
     // フォームの入力フィールド「意味」の値を管理するstate。初期値は空文字列。
     const [meaning, setMeaning] = useState("");
+    //難易度の設定
+    const [difficultyLevel, setDifficultyLevel] = useState(1); // 初期値は1
     //ユーザーに表示するメッセージ
     const [message, setMessage] = useState("");
     //データ送信中かどうかを示すブール値のstate
@@ -26,6 +28,7 @@ const CreateWordPage: React.FC = () => {
                 body: JSON.stringify({
                     word: word.trim(), // 単語の前後の空白を削除して送信
                     meaning: meaning.trim(), // 意味の前後の空白を削除して送信
+                    difficultyLevel: difficultyLevel, // 難易度を送信
                 }),
             });
 
@@ -35,6 +38,7 @@ const CreateWordPage: React.FC = () => {
                 setMessage("単語が正常に追加されました。");
                 setWord(""); // フォームをクリア
                 setMeaning(""); // フォームをクリア
+                setDifficultyLevel(1); // 難易度を初期値にリセット
             }else{
                 const errorText = await response.text();
                 try {
@@ -74,6 +78,20 @@ const CreateWordPage: React.FC = () => {
                         onChange={(e) => setMeaning(e.target.value)}
                         required
                     />
+                </div>
+                <div>
+                    <label htmlFor="difficultyLevel">難易度:</label>
+                    <select
+                        id="difficultyLevel"
+                        value={difficultyLevel}
+                        onChange={(e) => setDifficultyLevel(Number(e.target.value))}
+                    >
+                        <option value={1}>簡単</option>
+                        <option value={2}>普通</option>
+                        <option value={3}>やや難しい</option>
+                        <option value={4}>難しい</option>
+                        <option value={5}>非常に難しい</option>
+                    </select>
                 </div>
                 <button type="submit" disabled={loading}>
                     {loading ? "送信中..." : "単語を追加"}
