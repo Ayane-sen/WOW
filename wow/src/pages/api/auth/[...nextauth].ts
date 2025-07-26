@@ -31,12 +31,22 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email },
         });
 
+        if (!user) {
+          console.log('ユーザーが見つかりませんでした。');
+          return null;
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(
+          credentials.password,
+          user.passwordHash
+        );
+
         // ユーザーが存在し、かつパスワードが一致するか検証
-        if (user && await bcrypt.compare(credentials.password, user.passwordHash)) {
-          // 認証成功。ユーザーオブジェクトを返す
+        if (isPasswordCorrect) {
+          console.log('認証成功！');
           return { id: user.id.toString(), name: user.username, email: user.email };
         } else {
-          // 認証失敗
+          console.log('認証失敗：パスワードが一致しません。');
           return null;
         }
       },
