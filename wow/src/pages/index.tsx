@@ -102,8 +102,6 @@ export default function Home() {
                       {/* 2. ログインしていない場合 */}
                       {status === 'unauthenticated' && (
                         <div className={styles.card}>
-                          <h2>ようこそ！</h2>
-                          <p>ログインすると、あなたのキャラクターステータスが表示されます。</p>
                           <p>まずはログインまたは新規登録をしてください。</p>
                         </div>
                       )}
