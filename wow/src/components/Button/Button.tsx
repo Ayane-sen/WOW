@@ -5,7 +5,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLElement>{
     children: React.ReactNode;
     isLoading?: boolean;
     loadingText?: string | React.ReactNode;
-    buttontype: 'menu'| 'quest'|'word'|'addword'|'home'|'login';   
+    buttontype: 'menu'| 'quest'|'addword'|'home'|'login'|'red';   
 }
 
 const Button: React.FC<ButtonProps> = ({
