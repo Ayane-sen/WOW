@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { type NextAuthOptions } from 'next-auth';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaClient } from '@/generated/prisma';
@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   // Prismaをデータベースアダプターとして使用する設定
   adapter: PrismaAdapter(prisma),
 
@@ -77,4 +77,6 @@ export default NextAuth({
 
   // セキュリティキー（本番環境では必ず設定）
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+export default NextAuth(authOptions);
