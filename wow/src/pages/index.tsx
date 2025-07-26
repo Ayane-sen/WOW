@@ -10,8 +10,23 @@ import mobileStyles from "../styles/toppageStyles/iPhone14.module.css";
 
 
 export default function Home() {
+  const { data: session, status } = useSession();
+  const [userData, setUserData] = useState<UserStatus | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const defaultGif = "/images/characterDefault.gif";
   const winkGif = "/images/characterWink.gif";
+
+  const [currentGif, setCurrentGif] = useState(defaultGif);
+
+  const handleClick = () => {
+    if (currentGif === winkGif) return;
+    setCurrentGif(winkGif);
+    // 1回再生ぶん待ってから戻すにょ(3秒）
+    setTimeout(() => {
+      setCurrentGif(defaultGif);
+    }, 3000);
+  };
 
   const [currentGif, setCurrentGif] = useState(defaultGif);
 
