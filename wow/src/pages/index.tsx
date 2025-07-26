@@ -107,7 +107,7 @@ export default function Home() {
         <main className={clsx(baseStyles.main, mobileStyles.main)}>
           
           {/* キャラクター表示 */}
-          <div className={clsx(baseStyles.imageWrapper, mobileStyles.imageWrapper)}>
+          <div className={clsx(baseStyles.imageWrapper, mobileStyles.imageWrapper)} style={{ zIndex: 3}}>
             <img
               src="/images/宇宙人ピンク.gif"
               alt="宇宙のキャラクター"
@@ -124,13 +124,13 @@ export default function Home() {
           </div>
 
           <div className={styles.menu}>
-            <Link href="/create" className={styles.menuButton} style={{ zIndex: 3}}>
+            <Link href="/create" className={styles.menuButton} style={{ zIndex: 4}}>
               新しい単語を追加
             </Link>
-            <Link href="/question" className={styles.menuButton} style={{ zIndex: 3}}>
+            <Link href="/question" className={styles.menuButton} style={{ zIndex: 4}}>
               問題を解く
             </Link>
-            <Link href="/quest" className={styles.menuButton} style={{ zIndex: 3}}>
+            <Link href="/quest" className={styles.menuButton} style={{ zIndex: 4}}>
               クエスト
             </Link>
           </div>
