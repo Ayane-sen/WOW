@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Word {
+  id              Int           @id @default(autoincrement()) @map("word_id")
+  word            String
+  meaning         String
+  difficultyLevel Int          @default(1)
+  userId          Int?          @map("user_id")
+  quizHistories   QuizHistory[]
+  user            User?         @relation(fields: [userId], references: [id])
+
+  @@map("words")
+}
+
+model User {
+  id            Int            @id @default(autoincrement()) @map("user_id")
+  username      String         @unique
+  email         String         @unique
+  passwordHash  String         @map("password_hash")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  quizHistories QuizHistory[]
+  userCharacter UserCharacter?
+  words         Word[]
+
+  @@map("users")
+}
+
+model UserCharacter {
+  userId      Int      @id @map("user_id")
+  level       Int      @default(1) @map("current_level")
+  experience  Int      @default(0) @map("current_experience")
+  lastUpdated DateTime @default(now()) @updatedAt @map("last_updated")
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@map("user_characters")
+}
+
+model LevelStatus {
+  level              Int     @id
+  requiredExperience Int     @map("required_experience")
+  characterImage     String  @map("character_image")
+  attackPower        Int     @map("attack_power")
+  defensePower       Int     @map("defense_power")
+  skillUnlocked      String? @map("skill_unlocked")
+  hp                 Int
+
+  @@map("level_statuses")
+}
+
+model QuizHistory {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  wordId     Int      @map("word_id")
+  isCorrect  Boolean  @map("is_correct")
+  answeredAt DateTime @default(now()) @map("answered_at")
+  user       User     @relation(fields: [userId], references: [id])
+  word       Word     @relation(fields: [wordId], references: [id])
+
+  @@map("quiz_histories")
+}
+model Experience{
+  difficultyLevel Int @id
+  getexperience Int     @map("get_experience")
+
+  @@map("experience")
+}
