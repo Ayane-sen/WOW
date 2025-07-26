@@ -43,24 +43,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const userId = parseInt(session.user.id, 10);
     if (req.method === "GET") {
-        try{
+        try {
             const QUIZ_COUNT = 5; // 取得するクイズの数
 
-            // ユーザーの単語
-            const userWords = await prisma.word.findMany({ where: { userId: userId } });
-
-            // 運営が追加した単語
+            const userWords = await prisma.word.findMany({ where: { userId: userId } }); // ユーザーの単語
             const adminWords = await prisma.word.findMany({ where: { userId: null } }); // ユーザーIDがnullの単語は運営が追加したもの
             const allWords = [userWords, adminWords].flat(); // ユーザーの単語と運営の単語を結合
 
             // 単語が1つもなければクイズは作れず、処理を終了
             if (allWords.length === 0) {
                 return res.status(200).json([]); // 空の配列を返して、フロント側で「単語がありません」と表示させる
-            }
-
-            if(allWords.length < QUIZ_COUNT + 3) {
-                console.warn("クイズ生成エラー: 5問のクイズを作るための単語が不足してます。");
-                return res.status(500).json({ error: "クイズを生成するには単語が${QUIZ_COUNT}つ以上必要です。" });
             }
 
             // 正解の単語をランダムに選択
@@ -84,39 +76,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     return res.status(400).json({ error: "クイズを生成するには単語が${QUIZ_COUNT}問のクイズを生成できませんでした。" });
                 }
                 usedCorrectWordIds.add(correctWord.id); // 正解の単語を使用済みに追加
-                const question = correctWord.meaning      // クイズの質問は単語の意味
-                const correctAnswer = correctWord.word;   // 正解の単語
-                const difficultyLevel = correctWord.difficultyLevel; // 難易度レベル
+
+                const { meaning: question, word: correctAnswer, difficultyLevel } = correctWord;
                 
-                const otherWords = allWords.filter(word => word.id! == correctWord.id);
-                if (otherWords.length < 3) {
-                    console.warn("クイズ生成エラー: 不正解の単語が3つ未満です。");
-                    return res.status(500).json({ error: "クイズを生成するには不正解の単語が3つ以上必要です。" });
-                }
-                const incorrectAnswers: string[] = [];
+                const otherWords = allWords.filter(word => word.id !== correctWord.id);
+                const shuffledOtherWords = shuffleArray(otherWords); 
+                const incorrectAnswers = shuffledOtherWords.slice(0, 3).map(w => w.word); // 不正解の単語をランダムに3つ選択
+                
+                
                 const usedWordsOption = new Set<string>();
                 usedWordsOption.add(correctAnswer); // 正解の単語を使用済みに追加
-                // 不正解の単語をランダムに3つ選択
-                const shuffledOtherWords = shuffleArray(otherWords);
-                for (let j = 0; j < shuffledOtherWords.length && incorrectAnswers.length < 3; j++) {
-                    const word = shuffledOtherWords[j].word;
-                    if (!usedWordsOption.has(word)) { // まだ使用されていない単語を選択
-                        incorrectAnswers.push(word);
-                        usedWordsOption.add(word); // 使用済みに追加
-                    }
-                }
-                if (incorrectAnswers.length < 3) {
-                    console.warn("クイズ生成エラー: 不正解の単語が3つ未満です。");
-                    return res.status(500).json({ error: "クイズを生成するには不正解の単語が3つ以上必要です。" });
-                }
+                
                 // 正解と不正解の単語を結合してシャッフル
                 const options = shuffleArray([correctAnswer, ...incorrectAnswers]);
+      
                 // クイズデータを保存
                 quizzes.push(serializeBigInt({
-                    question: question,
-                    options: options,
-                    correctAnswer: correctAnswer,
-                    difficultyLevel: difficultyLevel,
+                    question,
+                    options,
+                    correctAnswer,
+                    difficultyLevel,
                 }));
             }
             
