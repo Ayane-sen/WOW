@@ -105,6 +105,9 @@ export default function Home() {
               <Link href="/question" className={styles.menuButton}>
                 問題を解く
               </Link>
+              <Link href="/quest" className={styles.menuButton}>
+                クエスト
+              </Link>
             </div>
           </>
         )}

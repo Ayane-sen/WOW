@@ -30,6 +30,7 @@ model User {
   quizHistories QuizHistory[]
   userCharacter UserCharacter?
   words         Word[]
+  questSessions  QuestSession[]
 
   @@map("users")
 }
@@ -39,6 +40,9 @@ model UserCharacter {
   level       Int      @default(1) @map("current_level")
   experience  Int      @default(0) @map("current_experience")
   lastUpdated DateTime @default(now()) @updatedAt @map("last_updated")
+  levelStatusId Int?     @map("level_status_id")
+  levelStatus   LevelStatus? @relation(fields: [levelStatusId], references: [level])
+
   user        User     @relation(fields: [userId], references: [id])
 
   @@map("user_characters")
@@ -52,6 +56,8 @@ model LevelStatus {
   defensePower       Int     @map("defense_power")
   skillUnlocked      String? @map("skill_unlocked")
   hp                 Int
+  userCharacters UserCharacter[]
+
 
   @@map("level_statuses")
 }
@@ -72,4 +78,32 @@ model Experience{
   getexperience Int     @map("get_experience")
 
   @@map("experience")
+}
+model Boss{
+  id Int @id @default(autoincrement())
+  name String @unique
+  initialHp Int @map("initial_hp")
+  attack Int @map("attack_power")
+  defense Int @map("defense_power")
+  imageUrl String @map("image_url")
+  questSessions QuestSession[]
+
+
+  @@map("bosses")
+}
+model QuestSession {
+  id               Int       @id @default(autoincrement())
+  userId           Int
+  bossId           Int
+  userCurrentHp    Int       @map("user_current_hp")
+  bossCurrentHp    Int       @map("boss_current_hp")
+  currentProblemIndex Int    @map("current_problem_index") @default(0) // 現在の問題が何問目か
+  questStatus      String    @default("ongoing") // "ongoing", "completed", "failed"
+  startedAt        DateTime  @default(now())
+  lastUpdated      DateTime  @updatedAt
+
+  user             User      @relation(fields: [userId], references: [id])
+  boss             Boss      @relation(fields: [bossId], references: [id])
+
+  @@map("quest_sessions")
 }
