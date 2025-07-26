@@ -1,6 +1,13 @@
-import {useState} from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+
 // CreateWordPage コンポーネントの定義
 const CreateWordPage: React.FC = () => {
+    // ログイン状態を取得
+    const { data: session, status } = useSession();
+    const router = useRouter();
+
     //// フォームの入力フィールド「単語」の値を管理するstate。初期値は空文字列。
     const [word, setWord] = useState("");
     // フォームの入力フィールド「意味」の値を管理するstate。初期値は空文字列。
@@ -12,6 +19,15 @@ const CreateWordPage: React.FC = () => {
     //データ送信中かどうかを示すブール値のstate
     const [loading, setLoading] = useState<boolean>(false);
 
+    // 認証状態を監視
+    useEffect(() => {
+        // statusが 'loading' ではない、かつ 'authenticated' (ログイン済み) でもない場合
+        if (status !== 'loading' && status !== 'authenticated') {
+            // ログインページにリダイレクト
+            router.push('/login');
+        }
+    }, [status, router]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();//ページの再読み込みの防止
         if(!word.trim() || !meaning.trim()) {
@@ -19,8 +35,10 @@ const CreateWordPage: React.FC = () => {
             return;
         }
         setLoading(true);//送信処理が始まる前にローディング状態をtrueに設定
+        setMessage("");
+
         try {   
-            const response = await fetch('/api/wordcreate',{
+            const response = await fetch('/api/create',{
                 method: 'POST',
                 headers:{
                     'Content-Type': 'application/json',// リクエストボディの形式がJSONであることを指定
@@ -32,32 +50,30 @@ const CreateWordPage: React.FC = () => {
                 }),
             });
 
-            let data;
-            if(response.ok){
-                data= await response.json();
+            if (response.ok) {
                 setMessage("単語が正常に追加されました。");
                 setWord(""); // フォームをクリア
                 setMeaning(""); // フォームをクリア
                 setDifficultyLevel(1); // 難易度を初期値にリセット
-            }else{
-                const errorText = await response.text();
-                try {
-                    const json = JSON.parse(errorText);
-                    setMessage(json.error || "単語の追加に失敗しました。");
-                } catch {
-                    setMessage("サーバーエラーが発生しました。");
-                }
+            } else {
+                const errorData = await response.json();
+                setMessage(errorData.error || "単語の追加に失敗しました。");
             }
-        }catch(error){
+        } catch(error) {
             console.error("Error adding word:", error);
             setMessage("単語の追加に失敗しました。");
-        }finally{
+        } finally {
             setLoading(false); // ローディング状態をfalseに戻す
         }
     };
+
+    if (status !== 'authenticated') {
+        return <p>読み込み中...</p>;
+    }
+
     return (
         <div>
-            <h1>新しい単語に追加</h1>
+            <h1>新しい単語の追加</h1>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="word">単語:</label>
