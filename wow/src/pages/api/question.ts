@@ -1,5 +1,7 @@
 import { PrismaClient } from "@/generated/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from './auth/[...nextauth]';
 
 const prisma = new PrismaClient();
 
@@ -20,93 +22,95 @@ function serializeBigInt(obj: any): any {
   }
 }
 
-//シャッフルする関数
-function shuffleArray<T>(array: T[]):T[]{
-    const newArray=[...array];
-    for(let i=newArray.length-1;i>0;i--){
-        const j=Math.floor(Math.random()*(i+1));
-        [newArray[i], newArray[j]]=[newArray[j], newArray[i]];
+// シャッフルする関数
+function shuffleArray<T>(array: T[]): T[] {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random()*(i+1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
     return newArray;
 }
-//５問のクイズデータを生成するAPIハンドラー
+
+// ５問のクイズデータを生成するAPIハンドラ
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if(req.method=="GET"){
+    // セッション情報を取得して、ログイン状態を確認する
+    const session = await getServerSession(req, res, authOptions);
+
+    if (!session || !session.user?.id) {
+        return res.status(401).json({ error: "認証されていません" });
+    }
+
+    const userId = parseInt(session.user.id, 10);
+    if (req.method === "GET") {
         try{
-            const QUIZ_COUNT=5;// 取得するクイズの数
-            //サンプルユーザーの情報を取得
-            const sampleUser=await prisma.user.findFirst();
-            if(!sampleUser){
-                console.error("Sample user not found");
-                return res.status(404).json({ error: "サンプルユーザーが見つかりません。" });
-            }
-            const userId=sampleUser.id;
-            //ユーザーの単語
-            const userWords=await prisma.word.findMany({
-                where: {
-                    userId: userId,
-                },
-            });
-            //運営が追加した単語
-            const adminWords=await prisma.word.findMany({
-                where: {
-                    userId: null, // ユーザーIDがnullの単語は運営が追加したもの
-                },
-            });
+            const QUIZ_COUNT = 5; // 取得するクイズの数
 
-            const allWords= [userWords, adminWords].flat();// ユーザーの単語と運営の単語を結合
-            if(allWords.length<QUIZ_COUNT+3){
+            // ユーザーの単語
+            const userWords = await prisma.word.findMany({ where: { userId: userId } });
+
+            // 運営が追加した単語
+            const adminWords = await prisma.word.findMany({ where: { userId: null } }); // ユーザーIDがnullの単語は運営が追加したもの
+            const allWords = [userWords, adminWords].flat(); // ユーザーの単語と運営の単語を結合
+
+            // 単語が1つもなければクイズは作れず、処理を終了
+            if (allWords.length === 0) {
+                return res.status(200).json([]); // 空の配列を返して、フロント側で「単語がありません」と表示させる
+            }
+
+            if(allWords.length < QUIZ_COUNT + 3) {
                 console.warn("クイズ生成エラー: 5問のクイズを作るための単語が不足してます。");
-                return res.status(500).json({ error: "クイズを生成するには単語が${QUIZ_COUNT+3}つ以上必要です。" });
+                return res.status(500).json({ error: "クイズを生成するには単語が${QUIZ_COUNT}つ以上必要です。" });
             }
 
-            //正解の単語をランダムに選択
-            const quizzes=[];
-            const usedCorrectWordIds=new Set<number>();//同じクイズセット内で正解の単語が重複しないように管理
-            const availableWords=shuffleArray(allWords);
+            // 正解の単語をランダムに選択
+            const quizzes = [];
+            const usedCorrectWordIds = new Set<number>(); // 同じクイズセット内で正解の単語が重複しないように管理
+            const availableWords = shuffleArray(allWords);
 
-            //指定された数のクイズを生成
-            for(let i=0;i<QUIZ_COUNT;i++){
-                let correctWord=null;
-                for(const word of availableWords){
-                    if(!usedCorrectWordIds.has(word.id)){// まだ使用されていない単語を見つける
-                        correctWord=word;
+            // 指定された数のクイズを生成
+            for (let i = 0; i < QUIZ_COUNT; i++) {
+                let correctWord = null;
+                for (const word of availableWords) {
+                    if (!usedCorrectWordIds.has(word.id)) { // まだ使用されていない単語を見つける
+                        correctWord = word;
                         usedCorrectWordIds.add(word.id);
                         break;
                     }
                 }
-                if(!correctWord){
+
+                if (!correctWord) {
                     console.warn("クイズ生成エラー: 正解の単語が見つかりません。");
                     return res.status(400).json({ error: "クイズを生成するには単語が${QUIZ_COUNT}問のクイズを生成できませんでした。" });
                 }
-                usedCorrectWordIds.add(correctWord.id);// 正解の単語を使用済みに追加
-                const question=correctWord.meaning// クイズの質問は単語の意味
-                const correctAnswer=correctWord.word;// 正解の単語
-                const difficultyLevel=correctWord.difficultyLevel;// 難易度レベル
+                usedCorrectWordIds.add(correctWord.id); // 正解の単語を使用済みに追加
+                const question = correctWord.meaning      // クイズの質問は単語の意味
+                const correctAnswer = correctWord.word;   // 正解の単語
+                const difficultyLevel = correctWord.difficultyLevel; // 難易度レベル
                 
-                const otherWords=allWords.filter(word=>word.id!==correctWord.id);
-                if(otherWords.length<3){
+                const otherWords = allWords.filter(word => word.id! == correctWord.id);
+                if (otherWords.length < 3) {
                     console.warn("クイズ生成エラー: 不正解の単語が3つ未満です。");
                     return res.status(500).json({ error: "クイズを生成するには不正解の単語が3つ以上必要です。" });
                 }
-                const incorrectAnswers: string[]=[];
-                const usedWordsOption=new Set<string>();
-                usedWordsOption.add(correctAnswer);// 正解の単語を使用済みに追加
-                //不正解の単語をランダムに3つ選択
-                const shuffledOtherWords=shuffleArray(otherWords);
-                for(let j=0;j<shuffledOtherWords.length && incorrectAnswers.length<3;j++){
-                    const word=shuffledOtherWords[j].word;
-                    if(!usedWordsOption.has(word)){// まだ使用されていない単語を選択
+                const incorrectAnswers: string[] = [];
+                const usedWordsOption = new Set<string>();
+                usedWordsOption.add(correctAnswer); // 正解の単語を使用済みに追加
+                // 不正解の単語をランダムに3つ選択
+                const shuffledOtherWords = shuffleArray(otherWords);
+                for (let j = 0; j < shuffledOtherWords.length && incorrectAnswers.length < 3; j++) {
+                    const word = shuffledOtherWords[j].word;
+                    if (!usedWordsOption.has(word)) { // まだ使用されていない単語を選択
                         incorrectAnswers.push(word);
-                        usedWordsOption.add(word);// 使用済みに追加
+                        usedWordsOption.add(word); // 使用済みに追加
                     }
                 }
-                if(incorrectAnswers.length<3){
+                if (incorrectAnswers.length < 3) {
                     console.warn("クイズ生成エラー: 不正解の単語が3つ未満です。");
                     return res.status(500).json({ error: "クイズを生成するには不正解の単語が3つ以上必要です。" });
                 }
-                //正解と不正解の単語を結合してシャッフル
-                const options=shuffleArray([correctAnswer, ...incorrectAnswers]);
+                // 正解と不正解の単語を結合してシャッフル
+                const options = shuffleArray([correctAnswer, ...incorrectAnswers]);
                 // クイズデータを保存
                 quizzes.push(serializeBigInt({
                     question: question,
@@ -115,16 +119,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     difficultyLevel: difficultyLevel,
                 }));
             }
-                return res.status(200).json(quizzes);// すべてのクイズを返す
-
             
+            return res.status(200).json(quizzes); // すべてのクイズを返す
+        
         } catch (error) {
-            console.error("Error generating quiz:", error);
-            return res.status(500).json({ error: "クイズの生成に失敗しました。" });
+        console.error("Error generating quiz:", error);
+        return res.status(500).json({ error: "クイズの生成に失敗しました。" });
         }
-    }else{
-        res.setHeader("Allow", "GET");
-        // メソッドがGET以外の場合は405エラーを返す
+    } else {
+        res.setHeader("Allow", ["GET"]);
         return res.status(405).json({ error: "Method Not Allowed" });
     }
 }

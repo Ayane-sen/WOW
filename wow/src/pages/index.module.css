@@ -1,0 +1,47 @@
+.index {
+  --gray-rgb: 0, 0, 0;
+  --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
+  --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
+
+  --button-primary-hover: #383838;
+  --button-secondary-hover: #f2f2f2;
+
+  display: grid;
+  grid-template-rows: 20px 1fr 20px;
+  align-items: center;
+  justify-items: center;
+  min-height: 100svh;
+  padding: 80px;
+  gap: 64px;
+  font-family: var(--font-geist-sans);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  grid-row-start: 2;
+}
+
+.menu {
+  display: flex;          
+  flex-direction: column; /* 子要素を縦方向に並べる */
+  gap: 1rem;              /* 要素間のスペース */
+  width: 100%;
+  max-width: 450px;
+  margin-top: 1rem;
+}
+
+.menuButton {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  background-color: #0070f3;
+  color: white;
+  text-align: center;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: background-color 0.2s ease;
+}

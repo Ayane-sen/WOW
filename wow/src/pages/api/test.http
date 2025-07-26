@@ -3,9 +3,20 @@ POST http://localhost:3000/api/exp_status
 Content-Type: application/json
 
 {
-  "userId": 3,
-  "difficultyLevel": 4
+  "userId": 9,
+  "difficultyLevel": 1
 }
 
 ### ユーザーのステータスを取得する
-GET http://localhost:3000/api/3/getstatus
+GET http://localhost:3000/api/9/getstatus
+
+
+### ユーザー登録
+POST http://localhost:3000/api/register
+Content-Type: application/json
+
+{
+  "username": "takuma",
+  "email": "mitimiti@gmail.com",
+  "password": "mitimiti"
+}
