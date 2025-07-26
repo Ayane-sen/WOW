@@ -1,5 +1,5 @@
 /*npm install clsxが必要 */
-
+import Link from 'next/link'; 
 import Image from "next/image";
 import Head from "next/head";
 import clsx from "clsx";
@@ -27,6 +27,12 @@ export default function Home() {
                 className={clsx(baseStyles.character, mobileStyles.character)}
               />
             </div>
+
+
+            
+            <Link href="/create"><button>新しい単語を追加</button></Link>
+            <Link href="/question"><button>問題を解く</button></Link>
+            
             
           </main>
         </div>
