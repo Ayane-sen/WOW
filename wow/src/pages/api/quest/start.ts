@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from "@/generated/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from 'next-auth/react'; // NextAuth.jsのセッション取得用
+import { getSession } from 'next-auth/react';
 
 const prisma = new PrismaClient();
 
@@ -20,6 +20,14 @@ function serializeBigInt(obj: any): any {
   }
 }
 
+function shuffleArray<T>(array: T[]): T[] {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
@@ -28,14 +36,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const session = await getSession({ req });
-    // **修正点: sessionStorage.user?.id を session.user?.id に修正**
     if (!session || !session.user || !session.user.id) {
       console.warn("クエスト開始API: 認証されていないユーザー、またはユーザーIDが見つかりません。");
       return res.status(401).json({ error: "認証が必要です。ログインしてください。" });
     }
 
-    // **修正点: userId のパースをより安全に**
-    const userId = parseInt(session.user.id, 10); // session.user.id は string であることが保証される
+    const userId = parseInt(session.user.id, 10);
     if (isNaN(userId)) {
       console.error("クエスト開始API: ログインユーザーのIDが無効な形式です。", session.user.id);
       return res.status(500).json({ error: "ログインユーザーのIDが無効な形式です。" });
@@ -64,6 +70,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const currentUserStatus = {
       userId: userCharacter.userId,
       currentHp: levelStatus?.hp || 100,
+      maxHp: levelStatus?.hp || 100, // maxHpを追加
       currentLevel: userCharacter.level,
       attackPower: levelStatus?.attackPower || 10,
       defensePower: levelStatus?.defensePower || 5,
@@ -77,18 +84,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json({ error: "クエストを開始できません。ボスデータがありません。" });
     }
 
-    // --- 3. 新しい QuestSession を作成 ---
-    const newQuestSession = await prisma.questSession.create({
-      data: {
+    // **修正点: 既存の進行中クエストセッションを探す**
+    let questSession = await prisma.questSession.findFirst({
+      where: {
         userId: userId,
         bossId: boss.id,
-        userCurrentHp: currentUserStatus.currentHp,
-        bossCurrentHp: boss.initialHp,
         questStatus: "ongoing",
       },
+      orderBy: { startedAt: 'desc' } // 最新のセッションを取得
     });
 
+    // **修正点: 既存のセッションがあればそれを使用、なければ新しく作成**
+    if (questSession) {
+      console.log(`既存の進行中クエストセッションを再利用します。ID: ${questSession.id}`);
+    } else {
+      console.log("新しいクエストセッションを作成します。");
+      questSession = await prisma.questSession.create({
+        data: {
+          userId: userId,
+          bossId: boss.id,
+          userCurrentHp: currentUserStatus.currentHp,
+          bossCurrentHp: boss.initialHp,
+          questStatus: "ongoing",
+        },
+      });
+    }
+
     // --- 4. 最初の問題を選択 ---
+    // 既存セッションを再利用する場合、currentProblemIndexに基づいて問題を選ぶことも可能だが、
+    // MVPではシンプルに毎回ランダムな問題を出題する。
     const currentProblem = await getRandomProblem(prisma);
     if (!currentProblem) {
         console.warn("クエスト開始API: 出題できる単語がデータベースにありません。");
@@ -97,17 +121,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // --- 5. レスポンスを返す ---
     return res.status(200).json(serializeBigInt({
-      questSessionId: newQuestSession.id,
+      questSessionId: questSession.id, // 既存または新規のセッションID
       boss: {
         id: boss.id,
         name: boss.name,
         initialHp: boss.initialHp,
-        currentHp: boss.initialHp,
+        currentHp: questSession.bossCurrentHp, // 既存セッションのHPを反映
         attack: boss.attack,
         defense: boss.defense,
         imageUrl: boss.imageUrl,
       },
-      userStatus: currentUserStatus,
+      userStatus: {
+        ...currentUserStatus,
+        currentHp: questSession.userCurrentHp // 既存セッションのHPを反映
+      },
       currentProblem: currentProblem,
     }));
 
@@ -117,7 +144,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
-// 問題をランダムに取得するヘルパー関数
 async function getRandomProblem(tx: PrismaClient | Prisma.TransactionClient) {
     const allWords = await tx.word.findMany({
         where: {
@@ -134,7 +160,6 @@ async function getRandomProblem(tx: PrismaClient | Prisma.TransactionClient) {
 
     const firstProblemWord = shuffleArray(allWords)[0];
     
-    // 不正解の選択肢の生成ロジック
     const otherWordsPool = allWords.filter(w => w.id !== firstProblemWord.id);
     const incorrectOptions: string[] = [];
     const usedOptions = new Set<string>();
@@ -149,7 +174,6 @@ async function getRandomProblem(tx: PrismaClient | Prisma.TransactionClient) {
         }
     }
 
-    // 選択肢が3つ未満の場合のハンドリング
     if (incorrectOptions.length < 3 && allWords.length >= 4) {
         console.warn("Not enough unique words for 3 incorrect options. Filling with duplicates if necessary or returning fewer options.");
     } else if (allWords.length < 4) {
@@ -165,14 +189,4 @@ async function getRandomProblem(tx: PrismaClient | Prisma.TransactionClient) {
         correctAnswer: firstProblemWord.word,
         difficultyLevel: firstProblemWord.difficultyLevel || 1,
     };
-}
-
-// 配列をランダムにシャッフルするヘルパー関数 (Fisher-Yatesアルゴリズム)。
-function shuffleArray<T>(array: T[]): T[] {
-  const newArray = [...array];
-  for (let i = newArray.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-  }
-  return newArray;
 }

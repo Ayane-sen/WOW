@@ -14,7 +14,8 @@ async function main() {
   // 依存関係のあるテーブルから順に削除 (外部キー制約のため)
   await prisma.quizHistory.deleteMany({});
   await prisma.userCharacter.deleteMany({});
-  await prisma.word.deleteMany({}); // user_idがNULLのWordも対象になるため、Userより先に削除
+  await prisma.word.deleteMany({});
+  await prisma.questSession.deleteMany({}); // **QuestSessionをUserより先に削除**
   await prisma.user.deleteMany({});
   await prisma.levelStatus.deleteMany({});
   await prisma.experience.deleteMany({});
