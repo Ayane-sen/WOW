@@ -61,3 +61,18 @@
     color: #9c9b9b;
 
 }
+
+.menu{
+    background-image: url('../../../public/images/ホーム画面へ.png');
+    position: fixed;
+    display: flex;
+    justify-content: center; /* 水平方向中央 */
+    align-items: center;     /* 垂直方向中央 */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    font-size: 18px;
+    color: #9c9b9b;
+}

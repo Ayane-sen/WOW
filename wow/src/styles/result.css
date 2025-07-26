@@ -1,0 +1,17 @@
+@media(min-width: 390px) and (min-height: 844px){
+    .backgroundSpace {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+
+    background-image: url("../../../public/images/色付き星.png"),
+                      url("../../../public/images/空.png");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+  }
+}
