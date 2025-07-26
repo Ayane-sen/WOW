@@ -7,7 +7,24 @@ import clsx from "clsx";
 
 import baseStyles from "../styles/toppageStyles/index.module.css";
 import mobileStyles from "../styles/toppageStyles/iPhone14.module.css";
+import styles from "./index.module.css";
+import UserProfile from "./userProfile";
+import LoginButton from './loginButton';
+import { useSession } from "next-auth/react";
 
+
+// APIから受け取るデータの型を定義
+interface UserStatus {
+  userId: number;
+  currentLevel: number;
+  currentExperience: number;
+  status: {
+    characterImage: string;
+    attackPower: number;
+    defensePower: number;
+    hp: number;
+  } | null;
+}
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -19,16 +36,6 @@ export default function Home() {
 
   const [currentGif, setCurrentGif] = useState(defaultGif);
 
-  const handleClick = () => {
-    if (currentGif === winkGif) return;
-    setCurrentGif(winkGif);
-    // 1回再生ぶん待ってから戻すにょ(3秒）
-    setTimeout(() => {
-      setCurrentGif(defaultGif);
-    }, 3000);
-  };
-
-  const [currentGif, setCurrentGif] = useState(defaultGif);
 
   const handleClick = () => {
     if (currentGif === winkGif) return;
@@ -69,15 +76,12 @@ export default function Home() {
                   />
                 </div>
 
-                  <Link href="/create"><button>新しい単語を追加</button></Link>
-                  <Link href="/question"><button>問題を解く</button></Link>
-
                   <Link href="/create">
-            <button className={mobileStyles.button}>新しい単語を追加</button>
-          </Link>
-          <Link href="/question">
-            <button className={mobileStyles.button}>問題を解く</button>
-          </Link>
+                  <button className={mobileStyles.button}>新しい単語を追加</button>
+                </Link>
+                <Link href="/question">
+                  <button className={mobileStyles.button}>問題を解く</button>
+                </Link>
 
                 
               </main>
