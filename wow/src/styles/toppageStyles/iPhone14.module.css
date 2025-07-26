@@ -112,18 +112,41 @@
     background-repeat: no-repeat;
   }
 
-  .redButton{
+  .buttonContainer{
     position: fixed;
-    top: 0px;
+    top: 0;
     left: 0;
-    width: 1vw;
+    width: 100vw;
+    height: 100vh;
+    z-index: 20;
+    pointer-events: auto;
+  }
+
+  .RedButtons, .GreenButtons, .BlueButtons{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
     height: 100vh;
     z-index: 10;
-    background-image: url("../../../public/images/redButton.png");
-    background-size: contain;
-    background-position: center;
+    background-size: cover;
+    background-position: center center;
     background-repeat: no-repeat;
+    pointer-events: auto;
+    cursor: pointer;
 
+  }
+
+  .RedButtons{
+    background-image: url("../../../public/images/RedButtons.png");
+  }
+
+  .GreenButtons{
+    background-image: url("../../../public/images/GreenButtons.png");
+  }
+
+  .BlueButtons{
+    background-image: url("../../../public/images/BlueButtons.png");
   }
 
   .index {

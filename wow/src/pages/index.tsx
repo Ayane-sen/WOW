@@ -12,6 +12,8 @@ import { useState, useEffect } from 'react';
 import LoginButton from './loginButton';
 import { useSession } from "next-auth/react";
 import { redirect } from 'next/dist/server/api-utils';
+import { useRouter } from 'next/router';
+
 
 // APIから受け取るデータの型を定義
 interface UserStatus {
@@ -31,6 +33,8 @@ export default function Home() {
   const [userData, setUserData] = useState<UserStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router =useRouter();
+
 
   useEffect(() => {
     // ログイン済み(authenticated)で、かつユーザーIDが存在する場合のみデータを取得
@@ -79,7 +83,15 @@ export default function Home() {
         <div className= {clsx(mobileStyles.planet,mobileStyles.Mars)}></div> 
       </div>
 
-      <div className= {clsx(mobileStyles.redButton)}> </div>
+      <div className= {clsx(mobileStyles.buttonContainer)}>
+        <div className= {clsx(mobileStyles.RedButtons)}
+        onClick= {()=> router.push('/')} />
+        <div className= {clsx(mobileStyles.GreenButtons)}
+        onClick= {() => router.push('/')} />
+        <div className= {clsx(mobileStyles.BlueButtons)}
+        onClick= {() => router.push('/question')} />
+      </div>
+
           <div className= {clsx(mobileStyles.backgroundShip)}>
             <div className={clsx(baseStyles.index, mobileStyles.index)}>
             
@@ -132,7 +144,7 @@ export default function Home() {
                     
                   )}
                   </div>
-     
+
                 </div>
               </main>
         </div>
