@@ -17,6 +17,7 @@ async function main() {
   await prisma.word.deleteMany({}); // user_idがNULLのWordも対象になるため、Userより先に削除
   await prisma.user.deleteMany({});
   await prisma.levelStatus.deleteMany({});
+  await prisma.experience.deleteMany({});
   console.log('Existing data cleared.');
 
   // --- 2. LevelStatus データ (依存元のため最初に作成) ---
@@ -26,7 +27,7 @@ async function main() {
       {
         level: 1,
         requiredExperience: 0,
-        characterImage: 'https://example.com/char_lvl1.png',
+        characterImage: 'ハッカソンsmpl.gif',
         attackPower: 10,
         defensePower: 5,
         hp: 100,
@@ -34,19 +35,19 @@ async function main() {
       },
       {
         level: 2,
-        requiredExperience: 100, // Lv1からLv2に必要な総経験値
+        requiredExperience: 200, // Lv1からLv2に必要な総経験値
         characterImage: 'https://example.com/char_lvl2.png',
         attackPower: 15,
-        defensePower: 7,
+        defensePower: 10,
         hp: 110,
         skillUnlocked: '集中力アップ',
       },
       {
         level: 3,
-        requiredExperience: 300,
+        requiredExperience: 400,
         characterImage: 'https://example.com/char_lvl3.png',
         attackPower: 20,
-        defensePower: 10,
+        defensePower: 15,
         hp: 120,
         skillUnlocked: '高速リピート',
       },
@@ -55,20 +56,64 @@ async function main() {
         requiredExperience: 600,
         characterImage: 'https://example.com/char_lvl4.png',
         attackPower: 25,
-        defensePower: 12,
+        defensePower: 20,
         hp: 130,
         skillUnlocked: 'ボーナス経験値',
       },
       {
         level: 5,
-        requiredExperience: 1000,
+        requiredExperience: 800,
         characterImage: 'https://example.com/char_lvl5.png',
         attackPower: 30,
-        defensePower: 15,
+        defensePower: 25,
         hp: 140,
-        skillUnlocked: '新コスチューム',
+        skillUnlocked: null,
       },
-      // 必要に応じてさらにレベルを追加
+      {
+        level: 6,
+        requiredExperience: 1000,
+        characterImage: 'https://example.com/char_lvl5.png',
+        attackPower: 35,
+        defensePower: 30,
+        hp: 150,
+        skillUnlocked: null,
+      },
+      {
+        level: 7,
+        requiredExperience: 1200,
+        characterImage: 'https://example.com/char_lvl5.png',
+        attackPower: 40,
+        defensePower: 35,
+        hp: 160,
+        skillUnlocked: null,
+      },
+      {
+        level: 8,
+        requiredExperience: 1400,
+        characterImage: 'https://example.com/char_lvl5.png',
+        attackPower: 45,
+        defensePower: 40,
+        hp: 170,
+        skillUnlocked: null,
+      },
+      {
+        level: 9,
+        requiredExperience: 1600,
+        characterImage: 'https://example.com/char_lvl5.png',
+        attackPower: 50,
+        defensePower: 45,
+        hp: 180,
+        skillUnlocked: null,
+      },
+      {
+        level: 10,
+        requiredExperience: 1800,
+        characterImage: 'https://example.com/char_lvl5.png',
+        attackPower: 55,
+        defensePower: 50,
+        hp: 190,
+        skillUnlocked: null,
+      },
     ],
   });
   console.log('Level statuses created.');
@@ -101,25 +146,161 @@ async function main() {
   // アプリデフォルトの単語
   const defaultWord1 = await prisma.word.create({
     data: {
-      word: 'apple',
-      meaning: 'りんご',
+      word: 'arrive',
+      meaning: '到着する',
       difficultyLevel: 1,
       userId: null,
     },
   });
   const defaultWord2 = await prisma.word.create({
     data: {
-      word: 'banana',
-      meaning: 'バナナ',
+      word: 'office',
+      meaning: '事務所、会社',
       difficultyLevel: 1,
       userId: null,
     },
   });
   const defaultWord3 = await prisma.word.create({
     data: {
-      word: 'computer',
-      meaning: 'コンピューター',
+      word: 'meeting',
+      meaning: '会議',
+      difficultyLevel: 1,
+      userId: null,
+    },
+  });
+  const defaultWord4 = await prisma.word.create({
+    data: {
+      word: 'product',
+      meaning: '製品',
+      difficultyLevel: 1,
+      userId: null,
+    },
+  });
+  const defaultWord5 = await prisma.word.create({
+    data: {
+      word: 'customer',
+      meaning: '顧客',
       difficultyLevel: 2,
+      userId: null,
+    },
+  });
+  const defaultWord6 = await prisma.word.create({
+    data: {
+      word: 'invoice',
+      meaning: '請求書',
+      difficultyLevel: 2,
+      userId: null,
+    },
+  });
+  const defaultWord7 = await prisma.word.create({
+    data: {
+      word: 'schedule',
+      meaning: 'スケジュール',
+      difficultyLevel: 2,
+      userId: null,
+    },
+  });
+  const defaultWord8 = await prisma.word.create({
+    data: {
+      word: 'request',
+      meaning: '要求',
+      difficultyLevel: 2,
+      userId: null,
+    },
+  });
+  const defaultWord9 = await prisma.word.create({
+    data: {
+      word: 'confirm',
+      meaning: '確認する',
+      difficultyLevel: 3,
+      userId: null,
+    },
+  });
+  const defaultWord10 = await prisma.word.create({
+    data: {
+      word: 'negotiate',
+      meaning: '交渉する',
+      difficultyLevel: 3,
+      userId: null,
+    },
+  });
+  const defaultWord11 = await prisma.word.create({
+    data: {
+      word: 'implement',
+      meaning: '実施する',
+      difficultyLevel: 3,
+      userId: null,
+    },
+  });
+  const defaultWord12 = await prisma.word.create({
+    data: {
+      word: 'evaluate',
+      meaning: '評価する',
+      difficultyLevel: 3,
+      userId: null,
+    },
+  });
+  const defaultWord13 = await prisma.word.create({
+    data: {
+      word: 'efficient',
+      meaning: '効率的な',
+      difficultyLevel: 4,
+      userId: null,
+    },
+  });
+  const defaultWord14 = await prisma.word.create({
+    data: {
+      word: 'allocate',
+      meaning: '割り当てる',
+      difficultyLevel: 4,
+      userId: null,
+    },
+  });
+  const defaultWord15 = await prisma.word.create({
+    data: {
+      word: 'comprehensive',
+      meaning: '包括的な',
+      difficultyLevel: 4,
+      userId: null,
+    },
+  });
+  const defaultWord16 = await prisma.word.create({
+    data: {
+      word: 'facilitate',
+      meaning: '促進する',
+      difficultyLevel: 4,
+      userId: null,
+    },
+  });
+  const defaultWord17 = await prisma.word.create({
+    data: {
+      word: 'contingency',
+      meaning: '偶発事態',
+      difficultyLevel: 5,
+      userId: null,
+    },
+  });
+  const defaultWord18 = await prisma.word.create({
+    data: {
+      word: 'mitigate',
+      meaning: '軽減する',
+      difficultyLevel: 5,
+      userId: null,
+    },
+  });
+  const defaultWord19 = await prisma.word.create({
+    data: {
+      word: 'diligence',
+      meaning: '勤勉',
+      difficultyLevel: 5,
+      userId: null,
+    },
+  });
+  const defaultWord20 = await prisma.word.create({
+    data: {
+      word: 'scrutinize',
+      meaning: '綿密に調べる',
+      difficultyLevel: 5,
       userId: null,
     },
   });
@@ -152,12 +333,21 @@ async function main() {
     data: {
       userId: user2.id,
       level: 2, // Bobは少し進んでいる設定
-      experience: 150,
+      experience: 250,
       lastUpdated: new Date(),
     },
   });
   console.log(`Created character for ${user2.username}.`);
-
+  // --- Experience データ ---
+  await prisma.experience.createMany({
+    data: [
+      { difficultyLevel: 1, getexperience: 10 },
+      { difficultyLevel: 2, getexperience: 20 },
+      { difficultyLevel: 3, getexperience: 30 },
+      { difficultyLevel: 4, getexperience: 40 },
+      { difficultyLevel: 5, getexperience: 50 },
+    ]
+  });
   // --- 6. QuizHistory データ (必要であれば) ---
   // テスト用のクイズ履歴
   await prisma.quizHistory.createMany({
