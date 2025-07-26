@@ -160,7 +160,7 @@
     font-size: 20px;
     padding: 12px 24px;
     border: none;
-    border-radius: 12px;
+    border-radius: none;
     top: 300px;      
   }
 }
