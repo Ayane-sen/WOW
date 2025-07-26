@@ -18,6 +18,7 @@ async function main() {
   await prisma.user.deleteMany({});
   await prisma.levelStatus.deleteMany({});
   await prisma.experience.deleteMany({});
+  await prisma.boss.deleteMany({});
   console.log('Existing data cleared.');
 
   // --- 2. LevelStatus データ (依存元のため最初に作成) ---
@@ -348,6 +349,16 @@ async function main() {
       { difficultyLevel: 5, getexperience: 50 },
     ]
   });
+  //ボスデータ
+  await prisma.boss.create({
+  data: {
+    name: 'やさしいスライム',
+    initialHp: 100, // 10問で倒すことを想定したHP
+    attack: 5,      // ボスの攻撃力（低レベルユーザーでも耐えられるように低め）
+    defense: 2,     // ボスの防御力（ユーザーの攻撃が通りやすいように低め）
+    imageUrl: 'ハッカソンsmpl.gif', // 緑色のスライム
+  },
+});
   // --- 6. QuizHistory データ (必要であれば) ---
   // テスト用のクイズ履歴
   await prisma.quizHistory.createMany({
