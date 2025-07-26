@@ -11,6 +11,7 @@ import UserProfile from "./userProfile";
 import { useState, useEffect } from 'react';
 import LoginButton from './loginButton';
 import { useSession } from "next-auth/react";
+import { redirect } from 'next/dist/server/api-utils';
 
 // APIから受け取るデータの型を定義
 interface UserStatus {
@@ -77,6 +78,8 @@ export default function Home() {
         <div className= {clsx(mobileStyles.planet,mobileStyles.Jupiter)}></div> 
         <div className= {clsx(mobileStyles.planet,mobileStyles.Mars)}></div> 
       </div>
+
+      <div className= {clsx(mobileStyles.redButton)}> </div>
           <div className= {clsx(mobileStyles.backgroundShip)}>
             <div className={clsx(baseStyles.index, mobileStyles.index)}>
             

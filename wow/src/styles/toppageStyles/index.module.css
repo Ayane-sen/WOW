@@ -25,7 +25,23 @@
     padding: 80px;
     gap: 64px;
     font-family: var(--font-geist-sans);
+
+    
+}
+
+  .redButton{
+    position: fixed;
+    top: 100vh;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 160px;
+    z-index: 10;
+    background-image: url("../../../public/images/redButton.png"); /* ✅ パスも修正推奨 */
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
   }
+  
 
 
 

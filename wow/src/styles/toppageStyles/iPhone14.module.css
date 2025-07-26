@@ -112,6 +112,20 @@
     background-repeat: no-repeat;
   }
 
+  .redButton{
+    position: fixed;
+    top: 600px;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    z-index: 10;
+    background-image: url("../../../public/images/redButton.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+
+  }
+
   .index {
     --gray-rgb: 0, 0, 0;
     --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
