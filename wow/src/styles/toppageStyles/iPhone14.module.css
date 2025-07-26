@@ -140,16 +140,19 @@
   }
   .imageWrapper{
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
+    display: flex;
     width: 390px;
-    height: 390px;
+    height: 844px;
+    top:0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
     z-index: 10;
+    pointer-events: auto;
   }
   .character{/*キャラクターの調整*/
     object-fit: contain;
+    pointer-events: auto;
   }
   
   .button {
