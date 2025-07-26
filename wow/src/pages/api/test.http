@@ -9,3 +9,14 @@ Content-Type: application/json
 
 ### ユーザーのステータスを取得する
 GET http://localhost:3000/api/3/getstatus
+
+
+### ユーザー登録
+POST http://localhost:3000/api/register
+Content-Type: application/json
+
+{
+  "username": "takuma",
+  "email": "mitimiti@gmail.com",
+  "password": "mitimiti"
+}
