@@ -89,25 +89,12 @@ export default function Home() {
                     className={clsx(baseStyles.character, mobileStyles.character)}
                   />
                 </div>
-                <div className={styles.index}>
-                  <div style={{ position: 'absolute', top: '1rem', right: '1rem' }}>
-                    <LoginButton />
-                  </div>
+                  <div className={styles.index}>
+                    <div style={{ position: 'absolute', top: '1rem', right: '1rem' }}>
+                      <LoginButton />
+                    </div>
 
                   <div className={styles.main}>
-                    {/* キャラクター表示 */}
-                    <div className={styles.header}>
-                      <h1>WOW</h1>
-                      <img 
-                        src={userData?.status?.characterImage || '/ハッカソンsmpl.gif'}
-                        alt="キャラクター"
-                        width={200}
-                        height={150}
-                      />
-                      <p>これはWOWうさぎです。</p>
-                      <p>みちみちin</p>
-                      
-
                       {/* ユーザーステータス表示 */}
                       {/* 1. ログイン状態をチェック中 */}
                       {status === 'loading' && <p>セッション情報を読み込み中...</p>}
@@ -124,13 +111,13 @@ export default function Home() {
                       {/* 3. ログインしている場合 */}
                       {status === 'authenticated' && (
                         <>
-                          <div className={styles.card}>
+                          {/*<div className={styles.card}>
                             <UserProfile
                               userData={userData}
                               loading={loading}
                               error={error}
                             />
-                          </div>
+                          </div>*/}
 
                           <div className={styles.menu}>
                             <Link href="/create" className={styles.menuButton}>
@@ -141,9 +128,10 @@ export default function Home() {
                             </Link>
                           </div>
                       </>
+                    
                   )}
-
-                          
+                  </div>
+     
                 </div>
               </main>
         </div>
