@@ -40,8 +40,7 @@ export default async function handler(
           if (setting) {
             totalExperienceGained += setting.getexperience;
           }else{
-            console.error(`Experience setting for difficulty level ${difficulty} not found.`);
-            return res.status(404).json({ error: `Experience setting for difficulty level ${difficulty} not found.` });
+            throw new Error(`Experience setting for difficulty level ${difficulty} not found.`);
           }
         }
 
@@ -94,7 +93,7 @@ export default async function handler(
         },
       });
 
-      return { ...updatedProgress, leveledUp, newCharacterImage, totalExperienceGained };
+      return { ...updatedProgress, leveledUp, newCharacterImage, earnedExperience: totalExperienceGained };
     });
 
     // res オブジェクトを使ってレスポンスを返す
