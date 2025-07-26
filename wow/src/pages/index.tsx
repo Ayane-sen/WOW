@@ -12,7 +12,10 @@ export default function Home() {
   return (
     <>
       <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta 
+          name="viewport" 
+          content="width=device-width, initial-scale=1.0, user-scalable=no" 
+        />
         <title>WOW</title>
       </Head>
       <div className= {clsx(mobileStyles.backgroundSpace)}>
@@ -35,8 +38,16 @@ export default function Home() {
                   />
                 </div>
 
-                  <Link href="/create"><button>新しい単語を追加</button></Link>
-                  <Link href="/question"><button>問題を解く</button></Link>
+                  {/*<Link href="/create"><button>新しい単語を追加</button></Link>
+                  <Link href="/question"><button>問題を解く</button></Link> */}
+
+                  <Link href="/create">
+                    <button className={mobileStyles.button}>新しい単語を追加</button>
+                  </Link>
+                  <Link href="/question">
+                    <button className={mobileStyles.button}>問題を解く</button>
+                  </Link>
+
                 
               </main>
         </div>
