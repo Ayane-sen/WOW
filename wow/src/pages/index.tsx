@@ -1,5 +1,11 @@
+import Link from 'next/link'; 
+import Image from "next/image";
+import Head from "next/head";
+import clsx from "clsx";
+
+import baseStyles from "../styles/toppageStyles/index.module.css";
+import mobileStyles from "../styles/toppageStyles/iPhone14.module.css";
 import styles from "./index.module.css";
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSession } from "next-auth/react";
 import { useRouter } from 'next/router';
@@ -72,43 +78,64 @@ export default function Home() {
   }
 
   return (
-    <div className={styles.index}>
-       <div style={{ position: 'absolute', top: '1rem', right: '1rem' }}>
-        <LoginButton />
+    <>
+      <Head>
+        <meta 
+          name="viewport" 
+          content="width=device-width, initial-scale=1.0, user-scalable=no" 
+        />
+        <title>WOW</title>
+      </Head>
+
+      <div className={clsx(baseStyles.index, mobileStyles.index)}>
+
+        <div className= {clsx(mobileStyles.backgroundSpace)} style={{ zIndex: 1 }}>
+          <div className= {clsx(mobileStyles.whiteStars)}></div>  
+          <div className= {clsx(mobileStyles.planet,mobileStyles.Earth)}></div> 
+          <div className= {clsx(mobileStyles.Sun)}></div> 
+          <div className= {clsx(mobileStyles.planet,mobileStyles.Jupiter)}></div> 
+          <div className= {clsx(mobileStyles.planet,mobileStyles.Mars)}></div> 
+        </div>
+
+        <div className= {clsx(mobileStyles.backgroundShip)} style={{ zIndex: 2}}></div>
+        
+
+        <div style={{ position: 'absolute', top: '1rem', right: '1rem', zIndex: 999 }}>
+          <LoginButton />
+        </div>
+      
+        <main className={clsx(baseStyles.main, mobileStyles.main)}>
+          
+          {/* キャラクター表示 */}
+          <div className={clsx(baseStyles.imageWrapper, mobileStyles.imageWrapper)}>
+            <img
+              src="/images/宇宙人ピンク.gif"
+              alt="宇宙のキャラクター"
+              className={clsx(baseStyles.character, mobileStyles.character)}
+            />
+          </div>
+
+          <div>
+            <UserProfile
+              userData={userData}
+              loading={loading}
+              error={error}
+            />
+          </div>
+
+          <div className={styles.menu}>
+            <Link href="/create" className={styles.menuButton} style={{ zIndex: 3}}>
+              新しい単語を追加
+            </Link>
+            <Link href="/question" className={styles.menuButton} style={{ zIndex: 3}}>
+              問題を解く
+            </Link>
+            <Link href="/quest" className={styles.menuButton} style={{ zIndex: 3}}>
+              クエスト
+            </Link>
+          </div>
+        </main>
       </div>
-
-      <main className={styles.main}>
-        {/* キャラクター表示 */}
-        <div className={styles.header}>
-          <h1>WOW</h1>
-          <img 
-            src={userData?.status?.characterImage || '/ハッカソンsmpl.gif'}
-            alt="キャラクター"
-            width={200}
-            height={150}
-          />
-        </div>
-
-        <div>
-          <UserProfile
-            userData={userData}
-            loading={loading}
-            error={error}
-          />
-        </div>
-
-        <div className={styles.menu}>
-          <Link href="/create" className={styles.menuButton}>
-            新しい単語を追加
-          </Link>
-          <Link href="/question" className={styles.menuButton}>
-            問題を解く
-          </Link>
-          <Link href="/quest" className={styles.menuButton}>
-            クエスト
-          </Link>
-        </div>
-      </main>
-    </div>
+    </>
   );
 };

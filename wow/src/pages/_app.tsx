@@ -1,7 +1,8 @@
-import type { AppProps } from 'next/app';
-import { SessionProvider } from "next-auth/react";
+// src/pages/_app.tsx
+import "../styles/global.css"; // ← ここでグローバルCSSを読み込む！
+import type { AppProps } from "next/app";
+import { SessionProvider } from "next-auth/react"
 
-// import '../styles/globals.css'; 
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (

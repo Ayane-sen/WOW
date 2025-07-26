@@ -36,6 +36,7 @@ const QuizPage: React.FC = () => {
         }
         if (status === 'unauthenticated') {
             router.push('/login'); // ログインしていなければログインページへ
+            return;
         }
         if (status === 'authenticated' && session) {
             // クイズデータを取得する関数
@@ -92,13 +93,15 @@ const QuizPage: React.FC = () => {
     // 答えを選択したときの処理
     const handleAnswerSelect = (answer: string) => {
         if (selectedAnswer) return; // 既に選択されている場合は何もしない
+
         setSelectedAnswer(answer);// ユーザーが選択した答えを設定
         const currentQuiz = quiz?.[currentQuizIndex];// 現在のクイズを取得
+
         if (currentQuiz && answer === currentQuiz.correctAnswer) {
             setFeedback("正解です！");// 正解の場合のフィードバック
             setCorrectCount(prevCount => {
                 const newCount = prevCount + 1;
-                if (currentQuiz.difficultyLevel!== undefined) {
+                if (currentQuiz.difficultyLevel!== null) {
                     setCorrectDifficulties(prevDifficulties => [...prevDifficulties, currentQuiz.difficultyLevel!]);// 正解の難易度レベルを追加
                 }
                 return newCount;
@@ -108,12 +111,13 @@ const QuizPage: React.FC = () => {
         }
     };
 
+    // 次の問題へ進む、または結果を送信
     const handleNextQuiz = async () => {
-        if(quiz && currentQuizIndex < quiz.length - 1){
-            setCurrentQuizIndex(prevIndex=>prevIndex + 1);// 次のクイズに進む
+        if (quiz && currentQuizIndex < quiz.length - 1) {
+            setCurrentQuizIndex(prevIndex => prevIndex + 1);// 次のクイズに進む
             setSelectedAnswer(null);// 選択した答えをリセット
             setFeedback(null);// フィードバックをリセット
-        }else{
+        } else {
             setDebugMessage(`最後の問題です。クイズ終了状態に設定します。正解数: ${correctCount}/${quiz?.length}`);// 結果をコンソールに表示
             setQuizFinished(true); // 終了状態に設定
 
@@ -140,6 +144,8 @@ const QuizPage: React.FC = () => {
         }
     };
 
+
+    // レンダリング処理
     if(isLoading){
         return <div>読み込み中...</div>; // ローディング中の表示
     }
