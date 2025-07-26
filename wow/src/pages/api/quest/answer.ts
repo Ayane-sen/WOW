@@ -1,6 +1,7 @@
 import { PrismaClient, Prisma } from "@/generated/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from 'next-auth/react'; // NextAuth.jsのセッション取得用
+import { getServerSession } from 'next-auth/next'; // NextAuth.jsのセッション取得用
+import { authOptions } from '../auth/[...nextauth]';
 
 const prisma = new PrismaClient();
 
@@ -57,7 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const session = await getSession({ req });
+    const session = await getServerSession( req, res, authOptions );
     if (!session || !session.user?.id) {
       console.warn("クエスト解答API: 認証されていないユーザーからのリクエスト。");
       return res.status(401).json({ error: "認証が必要です。ログインしてください。" });
@@ -94,17 +95,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         throw new Error("Invalid or inactive quest session.");
       }
 
-      // --- 2. ユーザーとボスの現在のステータスを取得 ---
-      const userCharacter = questSession.user.userCharacter;
-      const boss = questSession.boss;
+      const { boss } = questSession;
 
-      if (!userCharacter || !userCharacter.levelStatus) {
-        console.error("User character or level status not found in quest session data.");
-        throw new Error("User character or level status not found.");
+      // --- 2. ユーザーとボスの現在のステータスを取得 ---
+      const userCharacter = await tx.userCharacter.findUnique({
+        where: { userId: userId }
+      });
+      if (!userCharacter) {
+        throw new Error("User character not found.");
       }
 
-      const userAttack = userCharacter.levelStatus.attackPower || 10;
-      const userDefense = userCharacter.levelStatus.defensePower || 5;
+      const levelStatus = await tx.levelStatus.findUnique({
+        where: { level: userCharacter.level }
+      });
+      if (!levelStatus) {
+        throw new Error(`Level status for level ${userCharacter.level} not found.`);
+      }
+
+      const userAttack = levelStatus.attackPower || 10;
+      const userDefense = levelStatus.defensePower || 5;
       const bossAttack = boss.attack;
       const bossDefense = boss.defense;
 

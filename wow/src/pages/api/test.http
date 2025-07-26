@@ -3,7 +3,7 @@ POST http://localhost:3000/api/exp_status
 Content-Type: application/json
 
 {
-  "userId": 9,
+  "userId": 24,
   "difficultyLevel": 1
 }
 
