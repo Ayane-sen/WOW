@@ -34,16 +34,11 @@ export default function Home() {
                     className={clsx(baseStyles.character, mobileStyles.character)}
                   />
                 </div>
+
+                  <Link href="/create"><button>新しい単語を追加</button></Link>
+                  <Link href="/question"><button>問題を解く</button></Link>
                 
               </main>
-            </div>
-          </div>
-
-            <Link href="/create"><button>新しい単語を追加</button></Link>
-            <Link href="/question"><button>問題を解く</button></Link>
-            
-            
-          </main>
         </div>
       </div>
     </>
