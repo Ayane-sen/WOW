@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(400).json({ error: "難易度は1から5の範囲で指定してください。" });
         }
         try{
-          //サンプルユーザーの情報を取得
+          // サンプルユーザーの情報を取得
           const sampleUser=await prisma.user.findFirst();
           if(!sampleUser){
             console.error("Sample user not found");
