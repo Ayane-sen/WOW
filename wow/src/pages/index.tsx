@@ -1,5 +1,5 @@
 /*npm install clsxが必要 */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from 'next/link'; 
 import Image from "next/image";
 import Head from "next/head";
@@ -11,6 +11,7 @@ import styles from "./index.module.css";
 import UserProfile from "./userProfile";
 import LoginButton from './loginButton';
 import { useSession } from "next-auth/react";
+import { useRouter } from 'next/router';
 
 
 // APIから受け取るデータの型を定義
@@ -28,6 +29,7 @@ interface UserStatus {
 
 export default function Home() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [userData, setUserData] = useState<UserStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,6 +38,19 @@ export default function Home() {
 
   const [currentGif, setCurrentGif] = useState(defaultGif);
 
+  // 認証状態を監視し、未認証ならログインページにリダイレクトする useEffect
+  useEffect(() => {
+    if (status === 'loading') {
+      // セッションの読み込み中は何もせず待機
+      return;
+    }
+
+    if (status === 'unauthenticated') {
+      // 未認証の場合、ログインページにリダイレクト
+      router.push('/login');
+    }
+    // 'authenticated' の場合は、このコンポーネントのレンダリングを続行
+  }, [status, router]);
 
   const handleClick = () => {
     if (currentGif === winkGif) return;
@@ -45,6 +60,11 @@ export default function Home() {
       setCurrentGif(defaultGif);
     }, 3000);
   };
+
+  if (status === 'loading' || status === 'unauthenticated') {
+    return <div>読み込み中...</div>;
+  }
+
   return (
     <>
       <Head>
@@ -61,7 +81,7 @@ export default function Home() {
         <div className= {clsx(mobileStyles.planet,mobileStyles.Jupiter)}></div> 
         <div className= {clsx(mobileStyles.planet,mobileStyles.Mars)}></div> 
       </div>
-          <div className= {clsx(mobileStyles.backgroundShip)}>
+          <div className= {clsx(mobileStyles.backgroundShip)} style={{ zIndex: 0 }}>
             <div className={clsx(baseStyles.index, mobileStyles.index)}>
             
               <main className={clsx(baseStyles.main, mobileStyles.main)}>
@@ -76,17 +96,25 @@ export default function Home() {
                   />
                 </div>
 
-                  <Link href="/create">
-                  <button className={mobileStyles.button}>新しい単語を追加</button>
+                <Link href="/create">
+                  <button className={mobileStyles.button} style={{ zIndex: 100 }}>新しい単語を追加</button>
                 </Link>
                 <Link href="/question">
-                  <button className={mobileStyles.button}>問題を解く</button>
+                  <button className={mobileStyles.button} style={{ zIndex: 100 }}>問題を解く</button>
+                </Link>
+                <Link href="/quest">
+                  <button className={mobileStyles.button} style={{ zIndex: 100 }}>クエスト</button>
                 </Link>
 
                 
               </main>
         </div>
       </div>
+
+      <div style={{ position: 'absolute', top: '1rem', right: '1rem', zIndex: 999 }}>
+        <LoginButton />
+      </div>
+      
     </>
   );
 }
