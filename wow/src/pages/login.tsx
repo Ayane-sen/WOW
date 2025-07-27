@@ -35,7 +35,12 @@ export default function LoginPage() {
   return (
     <div style={styles.container}>
       <div>
-        <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
+        <div style={{ 
+            width: '100vw',
+            height: '100vw',
+            marginBottom: '2rem', 
+            textAlign: 'center' 
+          }}>
           <Image
             src="/images/title-logo.png"
             alt="WOW タイトルロゴ"
@@ -45,33 +50,42 @@ export default function LoginPage() {
           />
         </div>
 
-        <form onSubmit={handleSubmit} style={styles.form}>
-          <h2>ログイン</h2>
-          {error && <p style={styles.error}>{error}</p>}
-          <input
-            type="email"
-            placeholder="メールアドレス"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={styles.input}
-          />
-          <input
-            type="password"
-            placeholder="パスワード"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={styles.input}
-          />
-          <button type="submit" style={styles.button}>ログイン</button>
-          <p style={{ marginTop: '1rem' }}>
-            アカウントをお持ちでないですか？{' '}
-            <Link href="/register" style={{ color: '#0070f3' }}>
-              新規登録
-            </Link>
-          </p>
-        </form>
+
+        <div style={{
+          display: 'flex', 
+          justifyContent: 'center',
+          alignItems: 'center', 
+           
+        }}>
+          <form onSubmit={handleSubmit} style={styles.form}>
+            
+            <h2>ログイン</h2>
+            {error && <p style={styles.error}>{error}</p>}
+            <input
+              type="email"
+              placeholder="メールアドレス"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              style={styles.input}
+            />
+            <input
+              type="password"
+              placeholder="パスワード"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={styles.input}
+            />
+            <button type="submit" style={styles.button}>ログイン</button>
+            <p style={{ marginTop: '1rem' }}>
+              アカウントをお持ちでないですか？{' '}
+              <Link href="/register" style={{ color: '#0070f3' }}>
+                新規登録
+              </Link>
+            </p>
+          </form>
+          </div>
       </div>
     </div>
   );
@@ -83,7 +97,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex', 
     justifyContent: 'center',
     alignItems: 'center', 
-    minHeight: '100vh', 
+    height: '844px', 
+    width: '390px',
     backgroundColor: '#f3f4f6',
     padding: '1rem',
   },
