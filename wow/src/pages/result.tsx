@@ -140,13 +140,12 @@ const ResultPage: React.FC=()=>{
                   />
                 </div>
 
-                <div className={clsx(mobileStyles.button)}>
-                    <MenuButton buttontype="menu">
-                      <button onClick={handleBackToHome}>
-                        ホームに戻る
-                      </button>
-                    </MenuButton>
-                </div>
+                <MenuButton buttontype="menu">
+                  <button className={clsx(mobileStyles.homebutton)} onClick={handleBackToHome}>
+                    ホームに戻る
+                  </button>
+                </MenuButton>
+            
                  </main>
         </div>
       </div>
