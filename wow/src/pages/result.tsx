@@ -1,5 +1,10 @@
 import React,{useState,useEffect} from 'react';
 import {useRouter} from 'next/router';
+import clsx from "clsx";
+import Head from "next/head";
+import mobileStyles from "../styles/resultpageStyles/iPhone14.module.css";
+import MenuButton from '@/components/Button/Button';
+
 // 経験値加算APIのレスポンスの型定義
 interface ExpUpdateResponse {
   userId: number;
@@ -98,15 +103,62 @@ const ResultPage: React.FC=()=>{
         return <div>経験値を更新中...</div>; // 経験値更新中のメッセージ
     }
     return (
+      
         <div>
-            <h1>クイズ結果</h1>
-            <p>正解数: {correctcount} / {totalquestions}</p>
+          <head>
+            <meta 
+              name="viewport" 
+              content="width=device-width, initial-scale=1.0, user-scalable=no" 
+            />
+            <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet"></link>
+          </head>
+          <div className= {clsx(mobileStyles.backgroundSpace)}></div>
+          <div className= {clsx(mobileStyles.backgroundShip)}>
+            <div className={clsx( mobileStyles.index)}>
+            
+              <main className={clsx( mobileStyles.main)}>
+                <div className={clsx(mobileStyles.imageWrapper)}>
+                    <img
+                        src="/images/小さい星1.png"
+                        alt="小さい星1"
+                        className={clsx(mobileStyles.littlestar)}
+                    />
+                    <img
+                        src="/images/小さい星2.png"
+                        alt="小さい星2"
+                        className={clsx(mobileStyles.littlestar)}
+                    />
+                    <img
+                        src="/images/小さい星3.png"
+                        alt="小さい星3"
+                        className={clsx(mobileStyles.littlestar)}
+                    />
+                  <img
+                    src="/images/流れ星.png"
+                    alt="流れ星"
+                    className={clsx(mobileStyles.shootingstar)}
+                  />
+                </div>
+
+                <div className={clsx(mobileStyles.button)}>
+                    <MenuButton buttontype="menu">
+                      <button onClick={handleBackToHome}>
+                        ホームに戻る
+                      </button>
+                    </MenuButton>
+                </div>
+                 </main>
+        </div>
+      </div>
+
+            <h1 className={clsx(mobileStyles.header)}>結果</h1>
+            <p className={clsx(mobileStyles.correct)}>正解数: {correctcount} / {totalquestions}</p>
 
             {expUpdateResult && (
                 <div>
-                    <p>獲得経験値:{expUpdateResult.totalExperienceGained} EXP</p>
-                    <p>経験値: {expUpdateResult.experience}</p>
-                    <p>レベル: {expUpdateResult.level}</p>
+                    <p className={clsx(mobileStyles.exp)}>獲得経験値:{expUpdateResult.totalExperienceGained}EXP</p>
+                    <p className={clsx(mobileStyles.sumexp)}>経験値: {expUpdateResult.experience}</p>
+                    <p className={clsx(mobileStyles.level)}>レベル: {expUpdateResult.level}</p>
                     {expUpdateResult.leveledUp && (
                         <div>
                             <p>レベルアップしました！</p>
@@ -117,8 +169,9 @@ const ResultPage: React.FC=()=>{
                     )}
                 </div>
             )}
-            <button onClick={handleBackToHome}>ホームに戻る</button>
+
         </div>
+        
     );
 
 };
