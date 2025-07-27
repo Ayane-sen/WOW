@@ -31,11 +31,31 @@
     cursor: not-allowed;
 }
 
+.quest:hover {
+    background-image: url('../../../public/images/右下モニター色違い.png');
+    background-size: 100% 100%;
+    width: 200px;
+    height: 150px;
+    padding: 0;
+    font-size: 18px;
+    color: #3f1880;
+}
+
+.quest:active {
+    background-image: url('../../../public/images/右下モニター色違い.png');
+    background-size: 100% 100%;
+    width: 200px;
+    height: 150px;
+    padding: 0;
+    font-size: 18px;
+    color: #3f1880;
+}
+
 .quest {
     background-image: url('../../../public/images/右下モニター.png');
     background-size: 100% 100%;
-    width: 160px;
-    height: 120px;
+    width: 200px;
+    height: 150px;
     padding: 0;
     font-size: 18px;
     color: #de2020;

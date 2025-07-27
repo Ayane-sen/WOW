@@ -11,6 +11,32 @@
     background-repeat: no-repeat;
 }
 
+
+.container2{
+    background-image: url("../../public/images/fukidashi.png");
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+}
+
+.hover:hover {
+    background-image: url('../../public/images/右下モニター色違い.png');
+    background-size: 100% 100%;
+    width: 200px;
+    height: 150px;
+    padding: 0;
+    font-size: 18px;
+    color: #3f1880;
+}
+
+
 .topSection {
     width: 100%;
     max-width: 600px;
@@ -27,21 +53,28 @@
     font-size: 24px;
     padding: 20px; /* 内側の余白 */
     box-sizing: border-box; /* paddingをwidth/heightに含める */
+    position:fixed;
+    top:30px;
 }
 
 .buttonGrid {
     width: 100%;
+    height:30%;
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2列 */
+    position:fixed;
+    top:30%;
+    grid-template-columns: repeat(2, 1fr); 
     grid-template-rows: repeat(2, 1fr);
-    gap: 20px; /* ボタン間の間隔 */
-    margin-bottom: 40px; /* 下の要素との間隔 */
-    padding: 0 10px;
+    gap: 5px; 
+    row-gap: 0px;
+    column-gap: 0px;
+    margin-bottom: 40px; 
+    padding: 0 30px;
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
+    z-index: 10;
 }
-
 
 
 .bottomSection {

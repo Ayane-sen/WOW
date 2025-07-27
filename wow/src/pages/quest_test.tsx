@@ -5,7 +5,9 @@ import styles from '../styles/QuizPage.module.css';
 
 const TestPage: React.FC = () => {
     return(
-        <div className={styles.container}>
+        <div className={styles.container} >
+            <div className={styles.container2}>
+
 
             {/*上部大きいモニター */}
             <div className={styles.topSection}>
@@ -19,6 +21,7 @@ const TestPage: React.FC = () => {
                 <Button buttontype="quest">C</Button>
                 <Button buttontype="quest">D</Button>
 
+            </div>
             </div>
         </div>
     );
