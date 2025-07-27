@@ -32,7 +32,7 @@ export default async function handler(
       });
       res.status(201).json(newWord);
     } catch (error) {
-      console.error(error)
+      console.error(error);
       res.status(500).json({ error: '単語の作成に失敗しました' });
     }
   } else {
