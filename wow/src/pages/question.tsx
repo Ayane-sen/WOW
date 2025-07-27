@@ -1,5 +1,8 @@
 import React,{useState,useEffect} from 'react';
 import {useRouter} from 'next/router';
+import Button from '../components/Button/Button';
+import styles from '../styles/QuizPage.module.css';
+
 
 //クイズデータ型の定義
 interface QuizData {
@@ -101,12 +104,28 @@ const QuizPage: React.FC=()=>{
     };
     return (
         <div>
-            <h1>クイズに挑戦</h1>
-            <p><span>{currentQuiz?.question}</span></p>
-            <ul>
-                {currentQuiz?.options.map((option,index)=>(
-                    <li key={index}>
-                        <button
+             <div className={styles.question2}><span>{currentQuiz?.question}</span></div>
+            <div className={styles.container} >
+            <div className={styles.container2}>
+           
+
+            {/*上部大きいモニター */}
+           <div className={styles.topSection}>
+            </div>
+             
+
+            {/*中央4つの四角いモニター */}
+            
+            </div>
+            </div>
+            
+            
+
+                
+                <div className={styles.buttonGrid}>{currentQuiz?.options.map((option,index)=>(
+                    <div key={index}>
+                        <div>
+                        <Button buttontype="quest"
                             onClick={()=>handleAnswerSelect(option)}
                             disabled={!!selectedAnswer} // 既に選択されている場合はボタンを無効化
                             style={{
@@ -114,14 +133,16 @@ const QuizPage: React.FC=()=>{
                             }}
                         >
                             {option}
-                        </button>
-                    </li>
-                ))}
-            </ul>
-            {feedback && <p>{feedback}</p>} {/* フィードバックメッセージの表示 */}
-            {selectedAnswer && (
-                <button onClick={handleNextQuiz}>次のクイズへ</button> // 次のクイズへ進むボタン
-            )}
+                        </Button>
+                        </div>
+                    </div>
+                ))}</div>
+                <div className={styles.next}>
+                    {feedback && <p>{feedback}</p>} {/* フィードバックメッセージの表示 */}
+                    {selectedAnswer && (
+                        <button onClick={handleNextQuiz}>次のクイズへ</button> // 次のクイズへ進むボタン
+                    )}
+                </div>
         </div>
     )
 

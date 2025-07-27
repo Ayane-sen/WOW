@@ -1,0 +1,131 @@
+.container{
+    background-image: url("../../public/images/空.png");
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+    
+
+
+.container2{
+    background-image: url("../../public/images/fukidashi.png");
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+}
+    
+
+
+.topSection {
+    width: 100%;
+    max-width: 600px;
+    height: 100vh; /* 高さ調整 */
+    aspect-ratio: 2.4 / 1;
+    background-image: url("../../public/images/でかいモニター.png"); /* 上部の大きな四角の画像 */
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0 auto 40px auto; /* 下の要素との間隔 */
+    color: #00e6e6; /* 光るようなテキスト色 */
+    font-size: 24px;
+    padding: 20px; /* 内側の余白 */
+    box-sizing: border-box; /* paddingをwidth/heightに含める */
+    position:fixed;
+    top:-70px;
+}
+
+.question2{
+    font-size: 50px;
+    color:rgb(246, 246, 250);
+    position:fixed;
+    top: 100px;
+    left:100px;
+    width:auto;
+    height:auto;
+}
+
+.buttonGrid {
+    width: 100%;
+    height:50%;
+    display: grid;
+    position:fixed;
+    top:28%;
+    grid-template-columns: repeat(2, 1fr); 
+    grid-template-rows: repeat(2, 1fr);
+    /*gap: 5px; */
+    /*row-gap: 0px;
+    column-gap: 0px;
+    /*margin-bottom: 40px; 
+    /*padding: 0 30px;*/
+    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+
+.bottomSection {
+  width: 90%;
+  max-width: 600px;
+  min-height: 150px; /* 最小の高さ */
+  background-color: white; /* 白い吹き出し部分 */
+  border-radius: 20px; /* 角丸 */
+  position: relative;
+  box-shadow: 0 0 15px rgba(0, 230, 230, 0.7); /* 光る影 */
+  padding: 30px 20px 20px 20px; /* 上部に吹き出しの先端分の余白 */
+  box-sizing: border-box; /* paddingをwidth/heightに含める */
+}
+
+.speechBubbleTip {
+  position: absolute;
+  top: -20px; /* 吹き出しの先端を少し上に出す */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px; /* 先端の幅 */
+  height: 30px; /* 先端の高さ */
+  background-color: #00e6e6; /* 青い部分 */
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  /* 画像の吹き出しの先端は長方形に近いので、border-radiusは控えめに */
+}
+
+.speechBubbleContent {
+  color: #333;
+  font-size: 16px;
+  text-align: center;
+}
+.header{
+    position:fixed;
+    top:4%;
+    left:25%;
+}
+.question{
+    
+    position:fixed;
+    top:50%;
+    left:25%;
+}
+
+.next{
+    position: fixed;
+    height:150px;
+    width: 150px;
+    
+    right:30px;
+    bottom:7%;
+}
