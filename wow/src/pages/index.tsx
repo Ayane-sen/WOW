@@ -92,6 +92,8 @@ export default function Home() {
         onClick= {() => router.push('/question')} />
       </div>
 
+        <div className= {clsx(mobileStyles.nameOfButtons)}>
+
           <div className= {clsx(mobileStyles.backgroundShip)}>
             <div className={clsx(baseStyles.index, mobileStyles.index)}>
             
@@ -147,6 +149,7 @@ export default function Home() {
 
                 </div>
               </main>
+        </div>
         </div>
       </div>
     </>

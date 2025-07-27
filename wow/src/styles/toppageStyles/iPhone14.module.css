@@ -149,6 +149,19 @@
     background-image: url("../../../public/images/BlueButtons.png");
   }
 
+  .nameOfButtons{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 11;
+    background-image: url("../../../public/images/nameOfButtons.png");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    point-events: none;
+  }
   .index {
     --gray-rgb: 0, 0, 0;
     --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
