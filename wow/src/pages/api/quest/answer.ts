@@ -1,7 +1,5 @@
 import { PrismaClient, Prisma } from "@/generated/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from 'next-auth/next'; // NextAuth.jsのセッション取得用
-import { authOptions } from '../auth/[...nextauth]';
 
 const prisma = new PrismaClient();
 
@@ -58,12 +56,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const session = await getServerSession( req, res, authOptions );
-    if (!session || !session.user?.id) {
-      console.warn("クエスト解答API: 認証されていないユーザーからのリクエスト。");
-      return res.status(401).json({ error: "認証が必要です。ログインしてください。" });
-    }
-
+    const sampleUser=await prisma.user.findFirst();
+          if(!sampleUser){
+            console.error("Sample user not found");
+            return res.status(404).json({ error: "サンプルユーザーが見つかりません。" });
+          }
     const userId = parseInt(session.user.id as string, 10);
     if (isNaN(userId)) {
       console.error("クエスト解答API: ログインユーザーのIDが無効な形式です。", session.user.id);
