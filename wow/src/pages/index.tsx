@@ -96,15 +96,78 @@ export default function Home() {
                   />
                 </div>
 
-                <Link href="/create">
-                  <button className={mobileStyles.button} style={{ zIndex: 100 }}>新しい単語を追加</button>
+                <div style={{position:"relative", width:"390px", height:"844px"}}>
+                  <Link href="/create">
+                  <button className={mobileStyles.button} 
+                  style={{
+                    position:"absolute",
+                    width:"50%",
+                    height:"50%",
+                    bottom:"0%",
+                    left:"0%",
+                    transform:"translateX(-50%)",
+                    zIndex: 100, 
+                    background: "transparent",
+                    }}>
+                    <img
+                      src={"/images/nameOfGreen.png"}
+                      alt="緑ボタン"
+                      onClick={handleClick}
+                      style={{ 
+                        width: "100%",
+                        height: "auto",
+                        cursor: "pointer" }}
+                      className={clsx(baseStyles.character, mobileStyles.character)}
+                    />
+                  </button>
                 </Link>
                 <Link href="/question">
-                  <button className={mobileStyles.button} style={{ zIndex: 100 }}>問題を解く</button>
+                  <button className={mobileStyles.button} style={{ 
+                    position:"absolute",
+                    width:"50%",
+                    height:"50%",
+                    bottom:"50%",
+                    right:"20%",
+                    zIndex: 100, 
+                    background: "transparent",
+                    }}>
+                    <img
+                      src={"/images/nameOfBlue.png"}
+                      alt="青ボタン"
+                      onClick={handleClick}
+                      style={{ 
+                        width: "100%",
+                        height: "auto",
+                        cursor: "pointer"}}
+                      className="{clsx(baseStyles.character, mobileStyles.character)}"
+                    />
+                    </button>
                 </Link>
                 <Link href="/quest">
-                  <button className={mobileStyles.button} style={{ zIndex: 100 }}>クエスト</button>
+                  <button className={mobileStyles.button} 
+                  style={{
+                    position: "absolute",
+                    top: "20%",
+                    left: "30%",
+                    transform: "translateX(-50%)",
+                    width: "50%",
+                    height: "50%",                
+                    zIndex: 100,
+                    background: "transparent",
+                    }}>
+                    <img
+                      src={"/images/nameOfRed.png"}
+                      alt="赤ボタン"
+                      onClick={handleClick}
+                      style={{ 
+                        width: "100%",
+                        height: "auto",
+                        cursor: "pointer"}}
+                      className="{clsx(baseStyles.character, mobileStyles.character)}"
+                    />
+                   </button>
                 </Link>
+                </div>
 
                 
               </main>
