@@ -139,6 +139,19 @@
 
   .RedButtons{
     background-image: url("../../../public/images/RedButtons.png");
+    color: #f2f2f2;
+    font-size: 30px;
+  }
+
+  .red{
+    position:fixed;
+    color:aliceblue;
+    bottom:10%;
+    font-size: 50px;
+    z-index: 50;
+    width:30%;
+    height:10%;
+    background-color: aqua;
   }
 
   .GreenButtons{
@@ -160,7 +173,7 @@
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
-    point-events: none;
+    pointer-events: none;
   }
   .index {
     --gray-rgb: 0, 0, 0;
