@@ -69,10 +69,6 @@
     width: 100vw;
     height: 100vh;
   }
-  .button{
-    position: absolute;
-    bottom: 0;
-  }
   .header{
     font-family: 'Yomogi', 'Helvetica', sans-serif;
     color:#f2f2f2;
@@ -112,5 +108,12 @@
     position:fixed;
     top:70%;
     left:35%;
+  }
+  .homebutton{
+    font-family: 'Yomogi', 'Helvetica', sans-serif;
+    font-size: 30px;
+    position:fixed;
+    top:86.7%;
+    left:25%;
   }
 }
