@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useSession, signIn } from 'next-auth/react';
+import { init } from 'next/dist/compiled/webpack/webpack';
 
 // APIレスポンスの型定義
 interface BossData {
@@ -33,7 +34,7 @@ interface ProblemData {
 interface QuestStartResponse {
   questSessionId: number;
   boss: BossData;
-  userStatus: UserStatusData;
+  userStatus: UserStatusData &{initialHp: number}; // 初期HPも含む  
   currentProblem: ProblemData;
 }
 
@@ -71,6 +72,14 @@ const QuestPage: React.FC = () => {
   const [isProcessingAnswer, setIsProcessingAnswer] = useState<boolean>(false); // 解答処理中
   const [questFinishedStatus, setQuestFinishedStatus] = useState<string | null>(null); // "completed" or "failed"
 
+  // ダメージ表示用
+  const [damageDealtToBoss, setDamageDealtToBoss] = useState<number | null>(null);
+  const [damageTakenByUser, setDamageTakenByUser] = useState<number | null>(null);
+
+  // 正解した問題の難易度レベル
+  const [correctDifficulties, setCorrectDifficulties] = useState<number[]>([]);
+
+
   // --- クエスト開始処理 ---
   const startQuest = async () => {
     setIsLoading(true);
@@ -84,6 +93,9 @@ const QuestPage: React.FC = () => {
     setSelectedAnswer(null);
     setFeedback(null);
     setIsProcessingAnswer(false);
+    setDamageDealtToBoss(null);
+    setDamageTakenByUser(null);
+    setCorrectDifficulties([]);
 
     try {
       if (status !== 'authenticated' || !session?.user?.id) {
@@ -121,6 +133,11 @@ const QuestPage: React.FC = () => {
     const isCorrect = answer === currentProblem?.correctAnswer;
     setFeedback(isCorrect ? '🎉 正解！' : `残念！正解は「${currentProblem?.correctAnswer}」でした。`);
 
+    // 正解した問題の難易度をリストに追加
+    if (isCorrect && currentProblem?.difficultyLevel) {
+      setCorrectDifficulties(prev => [...prev, currentProblem.difficultyLevel]);
+    }
+
     if (!questSessionId || !currentProblem || !userStatus) {
       setError('クエスト情報が不足しています。');
       setIsProcessingAnswer(false);
@@ -150,10 +167,20 @@ const QuestPage: React.FC = () => {
       setBossData(prev => prev ? { ...prev, currentHp: data.newBossHp } : null);
       setUserStatus(prev => prev ? { ...prev, currentHp: data.newUserHp } : null);
 
+      // ダメージ情報を更新
+      setDamageDealtToBoss(data.damageDealtToBoss);
+      setDamageTakenByUser(data.damageTakenByUser);
+
+      // 次の問題番号を計算
+      const nextProblemNumber = currentProblemNumber + 1;
+
       // クエスト終了判定
       if (data.questStatus !== "ongoing") {
         setQuestFinishedStatus(data.questStatus); // "completed" or "failed"
-      } else {
+      } else if (nextProblemNumber > 10) {
+        // HPが残っていれば成功とみなす
+        setQuestFinishedStatus("completed");
+      }else {
         // 次の問題をセット
         setCurrentProblem(data.nextProblem);
         setCurrentProblemNumber(prev => prev + 1); // 問題数をインクリメント
@@ -172,14 +199,14 @@ const QuestPage: React.FC = () => {
     if (questFinishedStatus) {
       // クエストが終了した場合、ResultPageへ遷移
       router.push({
-        pathname: '/result',
+        pathname: '/quest_result',
         query: {
           questStatus: questFinishedStatus,
           bossName: bossData?.name || 'ボス',
           bossFinalHp: bossData?.currentHp || 0,
           userFinalHp: userStatus?.currentHp || 0,
+          correctDifficulties: correctDifficulties,
           // 必要に応じて、獲得経験値やレベルアップ情報も渡す
-          // これはexp_status APIの呼び出しをResultPageで行うため、ここでは渡さない
         },
       });
     } else {
@@ -187,6 +214,8 @@ const QuestPage: React.FC = () => {
       setSelectedAnswer(null);
       setFeedback(null);
       // currentProblemはsubmitAnswerで既に更新されている
+      setDamageDealtToBoss(null);
+      setDamageTakenByUser(null);
     }
   };
 
@@ -327,6 +356,13 @@ const QuestPage: React.FC = () => {
             ${selectedAnswer === currentProblem.correctAnswer ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-red-100 text-red-700 border border-red-300'}
           `}>
             {feedback}
+            {/* ダメージ情報を表示 */}
+            {damageDealtToBoss !== null && (
+              <p className="mt-2 text-green-700">⚔️ ボスに **{damageDealtToBoss}** ダメージ与えました！</p>
+            )}
+            {damageTakenByUser !== null && (
+              <p className="mt-2 text-red-700">💥 ユーザーは **{damageTakenByUser}** ダメージ受けました！</p>
+            )}
           </div>
         )}
 

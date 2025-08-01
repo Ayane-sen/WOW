@@ -1,5 +1,8 @@
 import { PrismaClient, Prisma } from "@/generated/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../auth/[...nextauth]';
+
 
 const prisma = new PrismaClient();
 
@@ -56,11 +59,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const sampleUser=await prisma.user.findFirst();
-          if(!sampleUser){
-            console.error("Sample user not found");
-            return res.status(404).json({ error: "サンプルユーザーが見つかりません。" });
-          }
+    const session = await getServerSession( req, res, authOptions );
+    if (!session || !session.user?.id) {
+      console.warn("クエスト開始API: 認証されていないユーザー、またはユーザーIDが見つかりません。");
+      return res.status(401).json({ error: "認証が必要です。ログインしてください。" });
+    }
     const userId = parseInt(session.user.id as string, 10);
     if (isNaN(userId)) {
       console.error("クエスト解答API: ログインユーザーのIDが無効な形式です。", session.user.id);
@@ -131,7 +134,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.log(`正解！ボスに ${damageDealtToBoss} ダメージ与えました。ボスのHP: ${newBossHp}`);
       } else {
         const RANDOM_FACTOR = 0.2;
-        const baseDamage = Math.max(1, bossAttack - userDefense);
+        const baseDamage = Math.max(10, bossAttack - userDefense)*2;
         const randomMultiplier = 1 + (Math.random() * 2 - 1) * RANDOM_FACTOR;
         damageTakenByUser = Math.floor(baseDamage * randomMultiplier);
         newUserHp = Math.max(0, questSession.userCurrentHp - damageTakenByUser);
