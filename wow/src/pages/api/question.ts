@@ -1,5 +1,8 @@
 import { PrismaClient } from "@/generated/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from './auth/[...nextauth]';
+
 
 const prisma = new PrismaClient();
 
@@ -34,17 +37,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if(req.method=="GET"){
         try{
             const QUIZ_COUNT=5;// 取得するクイズの数
-            //サンプルユーザーの情報を取得
-            const sampleUser=await prisma.user.findFirst();
-            if(!sampleUser){
-                console.error("Sample user not found");
-                return res.status(404).json({ error: "サンプルユーザーが見つかりません。" });
+            //ユーザーの情報を取得
+            const session = await getServerSession(req, res, authOptions);
+            if(!session || !session.user?.id){
+                console.warn("クエスト開始API: 認証されていないユーザー、またはユーザーIDが見つかりません。");
+                return res.status(401).json({ error: "認証が必要です。ログインしてください。" });
             }
-            const userId=sampleUser.id;
             //ユーザーの単語
             const userWords=await prisma.word.findMany({
                 where: {
-                    userId: userId,
+                    userId: parseInt(session.user.id, 10), // ユーザーIDを数値に変換
                 },
             });
             //運営が追加した単語
