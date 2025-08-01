@@ -134,7 +134,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.log(`正解！ボスに ${damageDealtToBoss} ダメージ与えました。ボスのHP: ${newBossHp}`);
       } else {
         const RANDOM_FACTOR = 0.2;
-        const baseDamage = Math.max(1, bossAttack - userDefense);
+        const baseDamage = Math.max(10, bossAttack - userDefense)*2;
         const randomMultiplier = 1 + (Math.random() * 2 - 1) * RANDOM_FACTOR;
         damageTakenByUser = Math.floor(baseDamage * randomMultiplier);
         newUserHp = Math.max(0, questSession.userCurrentHp - damageTakenByUser);

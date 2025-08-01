@@ -14,7 +14,9 @@ export default async function handler(
   }
 
   // リクエストボディを取得 (req.body を使用)
-  const { userId, correctDifficulties } = req.body;
+  const { userId: rawUserId, correctDifficulties } = req.body;
+
+  const userId = parseInt(rawUserId, 10);
 
   if (!userId || !Array.isArray(correctDifficulties)) {
     return res.status(400).json({ error: 'Invalid input' });
