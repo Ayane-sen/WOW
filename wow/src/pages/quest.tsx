@@ -172,7 +172,7 @@ const QuestPage: React.FC = () => {
     if (questFinishedStatus) {
       // クエストが終了した場合、ResultPageへ遷移
       router.push({
-        pathname: '/result',
+        pathname: '/quest_result',
         query: {
           questStatus: questFinishedStatus,
           bossName: bossData?.name || 'ボス',
