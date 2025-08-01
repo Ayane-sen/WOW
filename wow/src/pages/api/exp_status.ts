@@ -93,7 +93,7 @@ export default async function handler(
         },
       });
 
-      return { ...updatedProgress, leveledUp, newCharacterImage, earnedExperience: totalExperienceGained };
+      return { ...updatedProgress, leveledUp, newCharacterImage, totalExperienceGained };
     });
 
     // res オブジェクトを使ってレスポンスを返す

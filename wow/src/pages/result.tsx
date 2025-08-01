@@ -69,7 +69,6 @@ const ResultPage: React.FC=()=>{
       // サンプルユーザーIDを取得するAPIを呼び出す
       const fetchSampleUserIdAndProceed = async () => {
         try {
-          // **修正点: サンプルユーザーID取得APIのパスを絶対パスに修正**
           const userResponse = await fetch(window.location.origin + '/api/user-id');
           if (!userResponse.ok) {
             const errorData = await userResponse.json();
