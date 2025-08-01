@@ -1,5 +1,6 @@
 import React,{useState,useEffect} from 'react';
 import {useRouter} from 'next/router';
+import { useSession } from 'next-auth/react';
 import clsx from "clsx";
 import Head from "next/head";
 import mobileStyles from "../styles/resultpageStyles/iPhone14.module.css";
@@ -17,6 +18,7 @@ interface ExpUpdateResponse {
 }
 
 const ResultPage: React.FC=()=>{
+    const { data: session, status } = useSession();
     const router=useRouter();
     const{ correctCount, total, correctDifficulties: correctDifficultiesJson} = router.query;
 
@@ -64,33 +66,17 @@ const ResultPage: React.FC=()=>{
 
   // ページロード時に経験値更新APIを呼び出す
   useEffect(() => {
-    // router.isReady が true になるまで待つことで、クエリパラメータが確実に利用可能になる
-    if (router.isReady) {
-      // サンプルユーザーIDを取得するAPIを呼び出す
-      const fetchSampleUserIdAndProceed = async () => {
-        try {
-          const userResponse = await fetch(window.location.origin + '/api/user-id');
-          if (!userResponse.ok) {
-            const errorData = await userResponse.json();
-            throw new Error(errorData.error || 'ユーザーIDの取得に失敗しました。');
-          }
-          const userData = await userResponse.json();
-          
-          // ユーザーIDが取得できたら経験値更新APIを呼び出す
-          if (userData.userId) {
-            // **修正点: 正解した問題がある場合のみ経験値更新APIを呼び出す**
-            // 正解数が0でも、APIは呼ばれるが獲得経験値は0になる
-            await updateExperience(userData.userId, parsedCorrectDifficulties);
-          } else {
-            throw new Error('ユーザーIDが取得できませんでした。');
-          }
-        } catch (err: any) {
-          console.error("Error in fetching user ID or updating experience:", err);
-          setUpdateExperienceError(err.message || 'ユーザー情報の取得または経験値更新中にエラーが発生しました。');
-          setIsUpdatingExperience(false);
-        }
-      };
-      fetchSampleUserIdAndProceed();
+    if (router.isReady && status === 'authenticated' && session?.user?.id && !expUpdateResult) {
+      const userId = parseInt(session.user.id, 10);
+      if (!isNaN(userId)) {
+        updateExperience(userId, parsedCorrectDifficulties);
+      } else {
+        setUpdateExperienceError('ユーザーIDが有効ではありません。');
+        setIsUpdatingExperience(false);
+      }
+    } else if (status === 'unauthenticated') {
+      setUpdateExperienceError('認証が必要です。ログインしてください。');
+      setIsUpdatingExperience(false);
     }
   }, [router.isReady, correctDifficultiesJson]); // correctDifficultiesJson を依存配列に追加
 
