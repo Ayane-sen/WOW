@@ -357,10 +357,10 @@ const QuestPage: React.FC = () => {
           `}>
             {feedback}
             {/* ダメージ情報を表示 */}
-            {damageDealtToBoss !== null && (
+            {damageDealtToBoss !== null && damageTakenByUser == 0 &&(
               <p className="mt-2 text-green-700">⚔️ ボスに **{damageDealtToBoss}** ダメージ与えました！</p>
             )}
-            {damageTakenByUser !== null && (
+            {damageTakenByUser !== null && damageDealtToBoss == 0 &&(
               <p className="mt-2 text-red-700">💥 ユーザーは **{damageTakenByUser}** ダメージ受けました！</p>
             )}
           </div>
