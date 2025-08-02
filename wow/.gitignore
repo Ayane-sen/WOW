@@ -44,3 +44,5 @@ next-env.d.ts
 
 # .gitignoreに追加
 wowproject-467808-049b516619f1.json
+
+Zone.Identifier
