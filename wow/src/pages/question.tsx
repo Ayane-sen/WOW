@@ -6,6 +6,7 @@ import styles from '../styles/QuizPage.module.css';
 
 //クイズデータ型の定義
 interface QuizData {
+    wordId: number; 
     question: string;// 問題文
     options: string[];// 選択肢の配列
     correctAnswer: string;// 正解の単語
@@ -58,11 +59,16 @@ const QuizPage: React.FC=()=>{
         fetchQuiz();
     },[]);
 
-    const handleAnswerSelect=(answer:string)=>{
+    const handleAnswerSelect=async(answer:string)=>{
         if(selectedAnswer)return; // 既に選択されている場合は何もしない
         setSelectedAnswer(answer);// ユーザーが選択した答えを設定
         const currentQuiz=quiz?.[currentQuizIndex];// 現在のクイズを取得
-        if(currentQuiz && answer===currentQuiz.correctAnswer){
+        if (!currentQuiz) {
+            console.error("currentQuiz is null or undefined.");
+            return;
+        }
+        const isCorrect=answer===currentQuiz?.correctAnswer;// ユーザーの選択が正解かどうかを判定
+        if(isCorrect){
             setFeedback("正解です！");// 正解の場合のフィードバック
             setCorrectCount(prevCount=>{
                 const newCount = prevCount + 1;
@@ -73,6 +79,26 @@ const QuizPage: React.FC=()=>{
             });// 正解数を増やす
         }else{
             setFeedback("不正解です。正しい答えは「" + currentQuiz?.correctAnswer + "」です。");// 不正解の場合のフィードバック
+        }
+
+        try {
+            const response = await fetch(window.location.origin + '/api/quiz_register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    wordId: currentQuiz.wordId,
+                    isCorrect: isCorrect,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('解答履歴の送信に失敗しました:', errorData.error);
+            }
+        } catch (error) {
+            console.error('解答履歴の送信中にエラーが発生しました:', error);
         }
     };
 
