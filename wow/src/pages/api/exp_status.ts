@@ -92,6 +92,7 @@ export default async function handler(
         data: {
           experience: newExperience,
           level: newLevel,
+          levelStatusId: newLevel,
         },
       });
 
