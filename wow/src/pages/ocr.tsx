@@ -101,9 +101,9 @@ const OcrPage = () => {
   return (
     <div>
       <Head>
-        <title>ラベル翻訳機能</title>
+        <title>もちもち翻訳</title>
       </Head>
-      <h1>ラベル翻訳機能</h1>
+      <h1>もちもちに聞いてみよう</h1>
 
       <div style={{ position: 'relative', width: '100%', maxWidth: '640px' }}>
         <video ref={videoRef} autoPlay playsInline muted style={{ width: '100%', display: hasPhoto ? 'none' : 'block' }}></video>
@@ -117,7 +117,7 @@ const OcrPage = () => {
         {hasPhoto && (
           <>
             <button onClick={sendToOcrApi} disabled={loading}>
-              {loading ? '処理中...' : 'ラベルを検出して翻訳する'}
+              {loading ? '処理中...' : '聞いてみる'}
             </button>
             <button onClick={() => setHasPhoto(false)} style={{ marginLeft: '10px' }}>撮り直す</button>
           </>
@@ -128,9 +128,8 @@ const OcrPage = () => {
 
       {translatedLabels.length > 0 && (
         <div style={{ marginTop: '20px', border: '1px solid #ccc', padding: '10px' }}>
-          <h2>検出されたラベルと翻訳</h2>
           {loading && <p>読み込み中...</p>}
-          
+          <p>これは</p>
           <ul>
             {translatedLabels.slice(0, 1).map((item, index) => (
               <li key={index} style={{ marginBottom: '5px' }}>
@@ -138,6 +137,7 @@ const OcrPage = () => {
               </li>
             ))}
           </ul>
+          <p>だもっち</p>
         </div>
       )}
     </div>
