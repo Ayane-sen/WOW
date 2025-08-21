@@ -26,7 +26,7 @@ export default async function handler(
         data: {
           word,
           meaning,
-          difficultyLevel,
+          difficultyLevel: difficultyLevel || 3, // デフォルト値を設定
           userId: userId, // ログインユーザーのIDを紐付ける
         },
       });
