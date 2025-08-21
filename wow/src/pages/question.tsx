@@ -26,6 +26,7 @@ const QuizPage: React.FC=()=>{
     const [isLoading,setIsLoading]=useState<boolean>(true);// ローディング状態の管理
     const [error,setError]=useState<string|null>(null);// エラーメッセージの状態
     const [debugMessage,setDebugMessage]=useState<string|null>(null);// デバッグメッセージの状態
+    const [wordIds, setWordIds] = useState<number[]>([]);
     // クイズデータを取得する関数
     const fetchQuiz=async()=>{
         setIsLoading(true);// ローディング状態を開始
@@ -37,6 +38,7 @@ const QuizPage: React.FC=()=>{
         setCorrectCount(0);// 正解数をリセット
         setDebugMessage(null);// デバッグメッセージをリセット
         setCorrectDifficulties([]);// 正解の難易度レベルをリセット
+        setWordIds([]);// 単語IDのリセット
 
         try{
             const response=await fetch(window.location.origin+'/api/question');// APIからクイズデータを取得(絶対パスで指定)
@@ -46,6 +48,9 @@ const QuizPage: React.FC=()=>{
             }
             const data: QuizData[]=await response.json();
             setQuiz(data);// 取得したクイズデータを状態に設定
+
+            const extractedWordIds = data.map(q => q.wordId);
+            setWordIds(extractedWordIds); // 単語IDを状態に設定
         }catch(err:any){
             console.error("Error fetching quiz:", err);
             setError(err.message || "クイズの読み込み中にエラーが発生しました。");
@@ -102,7 +107,7 @@ const QuizPage: React.FC=()=>{
         }
     };
 
-    const handleNextQuiz=()=>{
+    const handleNextQuiz=async()=>{
         if(quiz && currentQuizIndex < quiz.length - 1){
             setCurrentQuizIndex(prevIndex=>prevIndex + 1);// 次のクイズに進む
             setSelectedAnswer(null);// 選択した答えをリセット
@@ -110,11 +115,30 @@ const QuizPage: React.FC=()=>{
         }else{
             setDebugMessage(`最後の問題です。クイズ終了状態に設定します。正解数: ${correctCount}/${quiz?.length}`);// 結果をコンソールに表示
             //setQuizFinished(true);// 最後のクイズが終わったら終了状態を設定
-            //ここで経験値を加算するAPIを呼ぶ
+            try {
+            const response = await fetch('/api/update_difficulty', { // APIパスを修正
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ wordIds: wordIds }), // クイズで出題されたすべての単語IDを送信
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('難易度更新APIの呼び出しに失敗しました:', errorData.error);
+                // ユーザーにエラーを通知する処理も検討
+            } else {
+                console.log('難易度更新APIの呼び出しに成功しました。');
+            }
+        } catch (error) {
+            console.error('難易度更新APIの呼び出し中にエラーが発生しました:', error);
+        }
             router.push({
                 pathname: '/result', // 結果ページにリダイレクト
-                query: { correctCount: correctCount, total: quiz?.length || 0,correctDifficulties:JSON.stringify(correctDifficulties)}, // クエリパラメータで正解数と総問題数を渡す
+                query: { correctCount: correctCount, total: quiz?.length || 0,correctDifficulties:JSON.stringify(correctDifficulties),wordIds: JSON.stringify(wordIds)}, // クエリパラメータで正解数と総問題数を渡す
             })
+
         }
     };
     const currentQuiz=quiz?.[currentQuizIndex]; // 現在のクイズデータを取得

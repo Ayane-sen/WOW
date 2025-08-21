@@ -55,6 +55,7 @@ export default async function handler(
             const wordname=words.find(w=>w.id===wordId);
             return {
                 word: wordname?.word || '不明',
+                wordId: wordId,
                 accuracyRate: Math.floor(accuracyRate), // 小数点以下を切り捨て
             };
         });
