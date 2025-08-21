@@ -46,7 +46,6 @@ const CreateWordPage: React.FC = () => {
                 body: JSON.stringify({
                     word: word.trim(), // 単語の前後の空白を削除して送信
                     meaning: meaning.trim(), // 意味の前後の空白を削除して送信
-                    difficultyLevel: difficultyLevel, // 難易度を送信
                 }),
             });
 
@@ -54,7 +53,6 @@ const CreateWordPage: React.FC = () => {
                 setMessage("単語が正常に追加されました。");
                 setWord(""); // フォームをクリア
                 setMeaning(""); // フォームをクリア
-                setDifficultyLevel(1); // 難易度を初期値にリセット
             } else {
                 const errorData = await response.json();
                 setMessage(errorData.error || "単語の追加に失敗しました。");
@@ -95,20 +93,7 @@ const CreateWordPage: React.FC = () => {
                         required
                     />
                 </div>
-                <div>
-                    <label htmlFor="difficultyLevel">難易度:</label>
-                    <select
-                        id="difficultyLevel"
-                        value={difficultyLevel}
-                        onChange={(e) => setDifficultyLevel(Number(e.target.value))}
-                    >
-                        <option value={1}>簡単</option>
-                        <option value={2}>普通</option>
-                        <option value={3}>やや難しい</option>
-                        <option value={4}>難しい</option>
-                        <option value={5}>非常に難しい</option>
-                    </select>
-                </div>
+                
                 <button type="submit" disabled={loading}>
                     {loading ? "送信中..." : "単語を追加"}
                 </button>
