@@ -31,6 +31,8 @@ model User {
   userCharacter UserCharacter?
   words         Word[]
   questSessions  QuestSession[]
+  user_items      user_items[]
+  gacha_history   gacha_history[]
 
   @@map("users")
 }
@@ -114,5 +116,56 @@ model QuestSession {
   @@map("quest_sessions")
 }
 
+// 💡 ガチャ機能用の新しいテーブルを追加
 
+// ガチャで排出されるアイテムのレア度を定義
+enum GachaRarity {
+    COMMON
+    RARE
+    SUPER_RARE
+    ULTRA_RARE
+}
 
+// ガチャで手に入るアイテムを管理するテーブル
+model gacha_items {
+    id          Int         @id @default(autoincrement())
+    name        String
+    description String
+    rarity      Int
+    image_url   String
+    type        String?
+
+    // user_items と gacha_history からの参照
+    userItems   user_items[]
+    gachaHistory gacha_history[]
+}
+
+// ユーザーが所持しているアイテムを管理するテーブル
+model user_items {
+    id          Int      @id @default(autoincrement())
+    quantity    Int      @default(1)
+    isEquipped  Boolean  @default(false)
+    createdAt   DateTime @default(now())
+
+    // ユーザーへのリレーション
+    userId      Int
+    user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    // ガチャアイテムへのリレーション
+    gachaItemId Int
+    gachaItem   gacha_items @relation(fields: [gachaItemId], references: [id], onDelete: Cascade)
+}
+
+// ガチャの実行履歴を記録するテーブル
+model gacha_history {
+    id          Int      @id @default(autoincrement())
+    createdAt   DateTime @default(now())
+
+    // ユーザーへのリレーション
+    userId      Int
+    user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    // ガチャアイテムへのリレーション
+    gachaItemId Int
+    gachaItem   gacha_items @relation(fields: [gachaItemId], references: [id])
+}

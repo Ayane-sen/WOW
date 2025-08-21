@@ -20,6 +20,10 @@ async function main() {
   await prisma.levelStatus.deleteMany({});
   await prisma.experience.deleteMany({});
   await prisma.boss.deleteMany({});
+  await prisma.gacha_items.deleteMany({});
+  await prisma.gacha_history.deleteMany({});
+  await prisma.user_items.deleteMany({});
+
   console.log('Existing data cleared.');
 
   // --- 2. LevelStatus データ (依存元のため最初に作成) ---
@@ -29,7 +33,7 @@ async function main() {
       {
         level: 1,
         requiredExperience: 0,
-        characterImage: 'ハッカソンsmpl.gif',
+        characterImage: 'characterDefault.gif',
         attackPower: 10,
         defensePower: 5,
         hp: 100,
@@ -38,7 +42,7 @@ async function main() {
       {
         level: 2,
         requiredExperience: 200, // Lv1からLv2に必要な総経験値
-        characterImage: 'https://example.com/char_lvl2.png',
+        characterImage: 'characterDefault.gif',
         attackPower: 15,
         defensePower: 10,
         hp: 110,
@@ -47,7 +51,7 @@ async function main() {
       {
         level: 3,
         requiredExperience: 400,
-        characterImage: 'https://example.com/char_lvl3.png',
+        characterImage: 'characterDefault.gif',
         attackPower: 20,
         defensePower: 15,
         hp: 120,
@@ -56,7 +60,7 @@ async function main() {
       {
         level: 4,
         requiredExperience: 600,
-        characterImage: 'https://example.com/char_lvl4.png',
+        characterImage: 'characterDefault.gif',
         attackPower: 25,
         defensePower: 20,
         hp: 130,
@@ -65,7 +69,7 @@ async function main() {
       {
         level: 5,
         requiredExperience: 800,
-        characterImage: 'https://example.com/char_lvl5.png',
+        characterImage: 'characterDefault.gif',
         attackPower: 30,
         defensePower: 25,
         hp: 140,
@@ -74,7 +78,7 @@ async function main() {
       {
         level: 6,
         requiredExperience: 1000,
-        characterImage: 'https://example.com/char_lvl5.png',
+        characterImage: 'characterDefault.gif',
         attackPower: 35,
         defensePower: 30,
         hp: 150,
@@ -83,7 +87,7 @@ async function main() {
       {
         level: 7,
         requiredExperience: 1200,
-        characterImage: 'https://example.com/char_lvl5.png',
+        characterImage: 'characterDefault.gif',
         attackPower: 40,
         defensePower: 35,
         hp: 160,
@@ -92,7 +96,7 @@ async function main() {
       {
         level: 8,
         requiredExperience: 1400,
-        characterImage: 'https://example.com/char_lvl5.png',
+        characterImage: 'characterDefault.gif',
         attackPower: 45,
         defensePower: 40,
         hp: 170,
@@ -101,7 +105,7 @@ async function main() {
       {
         level: 9,
         requiredExperience: 1600,
-        characterImage: 'https://example.com/char_lvl5.png',
+        characterImage: 'characterDefault.gif',
         attackPower: 50,
         defensePower: 45,
         hp: 180,
@@ -110,7 +114,7 @@ async function main() {
       {
         level: 10,
         requiredExperience: 1800,
-        characterImage: 'https://example.com/char_lvl5.png',
+        characterImage: 'characterDefault.gif',
         attackPower: 55,
         defensePower: 50,
         hp: 190,
@@ -353,7 +357,7 @@ async function main() {
   //ボスデータ
   await prisma.boss.create({
   data: {
-    name: 'やさしいスライム',
+    name: 'WOWうさぎ',
     initialHp: 100, // 10問で倒すことを想定したHP
     attack: 5,      // ボスの攻撃力（低レベルユーザーでも耐えられるように低め）
     defense: 2,     // ボスの防御力（ユーザーの攻撃が通りやすいように低め）
@@ -372,6 +376,18 @@ async function main() {
     ],
   });
   console.log('Created quiz histories.');
+  const gachaItems = [
+    { name: 'おぱんちゅうさぎバッジ', description: '特別なバッジです', rarity: 1, image_url: 'https://example.com/badge1.png', type: 'badge' },
+    { name: '宇宙服', description: '限定の宇宙服です', rarity: 2, image_url: 'https://example.com/spacesuit.png', type: 'costume' },
+    { name: 'ロケットの模型', description: 'かわいい模型です', rarity: 3, image_url: 'https://example.com/rocket_model.png', type: 'item' },
+  ];
+
+  for (const item of gachaItems) {
+    await prisma.gacha_items.create({
+      data: item,
+    });
+  }
+
 
   console.log('--- Seeding finished ---');
 }
