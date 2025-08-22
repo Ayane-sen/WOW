@@ -26,6 +26,7 @@ model User {
   username      String         @unique
   email         String         @unique
   passwordHash  String         @map("password_hash")
+  gachapoint Int @default(0)
   createdAt     DateTime       @default(now()) @map("created_at")
   quizHistories QuizHistory[]
   userCharacter UserCharacter?
