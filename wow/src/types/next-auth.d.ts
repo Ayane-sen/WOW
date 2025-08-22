@@ -21,6 +21,6 @@ declare module "next-auth/jwt" {
     /** ユーザーID */
     id?: string;
     /** ガチャポイント */
-    gachapoint?: number;
+    gachapoint: number;
   }
 }

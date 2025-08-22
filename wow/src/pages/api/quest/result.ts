@@ -74,7 +74,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.error("User character or level status not found for quest session:", questSession.id);
         throw new Error("User character or level status not found after quest.");
     }
-
     // ユーザーの最終キャラクター状態を構築
     const finalUserCharacterStatus = {
         userId: userCharacter.userId,
@@ -86,6 +85,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         skillUnlocked: userCharacter.levelStatus.skillUnlocked || null,
         hp: userCharacter.levelStatus.hp || null,
     };
+
 
     // レスポンスペイロードを構築
     return res.status(200).json(serializeBigInt({
