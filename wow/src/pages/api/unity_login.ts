@@ -12,7 +12,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { email, password } = req.body;
 
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({ 
+    where: { email },
+    include: {userCharacter: true} 
+  });
 
   if (!user) {
     return res.status(401).json({ message: 'ユーザーが見つかりません' });
@@ -27,7 +30,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // JWT発行
   console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
-  const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET!, { expiresIn: '7d' });
+  const token = jwt.sign(
+    { id: user.id, email: user.email }, 
+    process.env.JWT_SECRET!, 
+    { expiresIn: '7d' }
+  );
 
-  return res.status(200).json({ token });
+  return res.status(200).json({ 
+    token,
+    username: user.username,
+    level: user.userCharacter?.level || 1 // userCharacterがなければ1 
+  });
 }
