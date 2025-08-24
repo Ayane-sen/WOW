@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
+
 export const authOptions: NextAuthOptions = {
   // Prismaをデータベースアダプターとして使用する設定
   adapter: PrismaAdapter(prisma),
@@ -29,6 +30,13 @@ export const authOptions: NextAuthOptions = {
         // データベースからユーザーを検索
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            passwordHash: true, // パスワードハッシュを取得
+            gachapoint: true, // ガチャポイントも取得
+          },
         });
 
         if (!user) {
@@ -63,7 +71,9 @@ export const authOptions: NextAuthOptions = {
     // JWTにユーザーIDを含める
     jwt: async ({ token, user }) => {
       if (user) {
+        console.log("jwt callback user:", user);
         token.id = user.id;
+        token.gachapoint = user.gachapoint; // ユーザーのガチャポイントをトークンに追加
       }
       return token;
     },
@@ -72,6 +82,7 @@ export const authOptions: NextAuthOptions = {
     // session.user と token.id の両方が存在する場合のみ、IDをセッションに追加する
     if (session.user && token.id) {
         session.user.id = token.id as string;
+        session.user.gachapoint = token.gachapoint as number; // ガチャポイントもセッションに追加
     }
     return session;
     },

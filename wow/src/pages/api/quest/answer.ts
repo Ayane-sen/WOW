@@ -159,6 +159,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       } else if (newUserHp <= 0) {
         questStatus = "failed";
       }
+      //ガチャポイントの付与
+    if (questStatus === "completed") {
+      console.log("クエストが成功したため、ガチャポイントを付与します。");
+      // クエストが成功した場合、ガチャポイントを付与
+      await prisma.user.update({
+        where: { id: userId },
+        data: { gachapoint: { increment: 50 } }
+      });
+    }
 
       const updatedQuestSession = await tx.questSession.update({
         where: { id: questSessionId },
