@@ -9,6 +9,8 @@ declare module "next-auth" {
     user: {
       /** ユーザーID */
       id: string;
+      /** ガチャポイント */
+      gachapoint: number;
     } & DefaultSession["user"]; // 元々の name, email, image も使えるようにする
   }
 }
@@ -18,5 +20,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     /** ユーザーID */
     id?: string;
+    /** ガチャポイント */
+    gachapoint: number;
   }
 }

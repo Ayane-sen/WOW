@@ -74,7 +74,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.error("User character or level status not found for quest session:", questSession.id);
         throw new Error("User character or level status not found after quest.");
     }
-
     // ユーザーの最終キャラクター状態を構築
     const finalUserCharacterStatus = {
         userId: userCharacter.userId,

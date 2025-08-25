@@ -111,6 +111,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const options=shuffleArray([correctAnswer, ...incorrectAnswers]);
                 // クイズデータを保存
                 quizzes.push(serializeBigInt({
+                    wordId: correctWord.id,
                     question: question,
                     options: options,
                     correctAnswer: correctAnswer,
