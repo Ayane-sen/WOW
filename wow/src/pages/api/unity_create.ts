@@ -20,6 +20,15 @@ export default async function handler(
     const { word, meaning, difficultyLevel } = req.body;
     if (!word || !meaning) return res.status(400).json({ error: "単語と意味は必須です" });
 
+    const existing = await prisma.word.findFirst({
+        where: { userId, word, meaning }
+    });
+
+    if (existing) {
+        return res.status(200).json(existing); // 既存のものを返す
+    }
+
+
     const newWord = await prisma.word.create({
       data: { word, meaning, difficultyLevel: difficultyLevel || 3, userId }
     });
