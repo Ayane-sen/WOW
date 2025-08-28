@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
-import { PrismaClient } from "@/generated/prisma";
+import { PrismaClient, Prisma } from "@/generated/prisma";
 
 const prisma = new PrismaClient();
 
@@ -9,34 +9,47 @@ export default async function handler(
     res: NextApiResponse
 ) {
     try {
+      //認証チェック
     const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith("Bearer ")) 
+    if (!authHeader?.startsWith("Bearer ")) {
       return res.status(401).json({ error: "認証されていません" });
+    }
 
     const token = authHeader.split(" ")[1];
     const payload = jwt.verify(token, process.env.JWT_SECRET!) as { id: number };
     const userId = payload.id;
 
     const { word, meaning, difficultyLevel } = req.body;
-    if (!word || !meaning) return res.status(400).json({ error: "単語と意味は必須です" });
-
-    const existing = await prisma.word.findFirst({
-        where: { userId, word, meaning }
-    });
-
-    if (existing) {
-        return res.status(200).json(existing); // 既存のものを返す
+    if (!word || !meaning){
+       return res.status(400).json({ error: "単語と意味は必須です" });
     }
 
+    // **P2002キャッチ** 既存単語は登録できない
+    try {
+      const newWord = await prisma.word.create({
+        data: {
+          word,
+          meaning,
+          difficultyLevel: difficultyLevel || 3,
+          userId,
+        },
+      });
 
-    const newWord = await prisma.word.create({
-      data: { word, meaning, difficultyLevel: difficultyLevel || 3, userId }
-    });
-
-    return res.status(201).json(newWord);
-
-  } catch (err: any) {
+      return res.status(201).json(newWord);
+  } catch (error: any) {
+    if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        return res.status(409).json({ error: "この単語は既に登録されています" });
+      }
+      throw error; // 他のエラーはそのままcatchへ
+    }
+  } catch (err: any){
     console.error(err);
-    return res.status(500).json({ error: "単語の作成に失敗しました", details: err.message });
+    return res.status(500).json({
+      error: "単語の作成に失敗しました", 
+      details: err.message
+    });
   }
 }
