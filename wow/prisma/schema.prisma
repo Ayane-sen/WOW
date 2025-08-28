@@ -18,6 +18,7 @@ model Word {
   quizHistories   QuizHistory[]
   user            User?         @relation(fields: [userId], references: [id])
 
+  @@unique([userId, word, meaning]) // 同じユーザーの同じ単語と意味は重複不可
   @@map("words")
 }
 
