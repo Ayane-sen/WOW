@@ -1,0 +1,393 @@
+/* questStyles.module.css */
+
+/* 全体のコンテナ - 宇宙空間の背景 */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100svh; /* 画面の高さに合わせる */
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #0f0a28 0%, #2a0f4a 50%, #0d0a3d 100%);
+  color: #e0e0e0;
+  font-family: 'Orbitron', sans-serif;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box; /* パディングを含めてサイズを計算 */
+}
+
+
+/* 背景の星屑アニメーション */
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.1) 1%, transparent 10%),
+              radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.08) 1%, transparent 10%),
+              url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="rgba(255,255,255,0.05)"><circle cx="50" cy="50" r="1" /></svg>'); /* 小さな星のパターン */
+  background-size: 800px 800px, 600px 600px, 50px 50px;
+  animation: starfield 200s linear infinite; /* 星が流れるアニメーション */
+}
+
+@keyframes starfield {
+  from { background-position: 0 0, 0 0, 0 0; }
+  to { background-position: 10000px 10000px, 8000px 8000px, 500px 500px; }
+}
+
+
+/* メインのコンテンツパネル - ホログラム風デザイン */
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* 親要素の残りのスペースを埋める */
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  border: 3px solid #00e5ff;
+  background: rgba(10, 0, 30, 0.6);
+  box-shadow: 0 0 30px rgba(0, 229, 255, 0.6), inset 0 0 15px rgba(0, 229, 255, 0.3);
+  max-width: 36rem;
+  width: 100%;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+}
+
+
+/* ホログラムパネルの縁を光らせるアニメーション */
+.mainContent::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border-radius: 1.8rem;
+  border: 1px solid rgba(0, 229, 255, 0.3); /* 縁に薄い光 */
+  animation: pulseBorder 4s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes pulseBorder {
+  0% { box-shadow: 0 0 5px rgba(0, 229, 255, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(0, 229, 255, 0.8); }
+  100% { box-shadow: 0 0 5px rgba(0, 229, 255, 0.3); }
+}
+
+
+/* タイトル - 宇宙船のディスプレイ風 */
+.title {
+  font-size: 2.8rem; /* 大きな文字 */
+  font-weight: 900; /* より太く */
+  color: #00e5ff; /* 明るいシアン */
+  margin-bottom: 2rem;
+  text-shadow: 0 0 15px rgba(0, 229, 255, 0.8), 0 0 5px rgba(0, 229, 255, 0.5); /* 強いネオン光 */
+  letter-spacing: 0.1em; /* 文字間隔を広げる */
+  animation: neonGlow 2s ease-in-out infinite alternate; /* ネオン光のアニメーション */
+}
+
+@keyframes neonGlow {
+  from { text-shadow: 0 0 5px #00e5ff, 0 0 10px #00e5ff, 0 0 15px #00e5ff; }
+  to { text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff, 0 0 30px #00e5ff; }
+}
+
+/* SF風の装飾 (四隅のライン) */
+.decorations div { /* .topLine, .rightLine, etc. に適用 */
+  background: #00e5ff;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.7); /* 光るエフェクト */
+}
+
+.topLine { top: 1.5rem; width: 3rem; height: 0.3rem; }
+.rightLine { right: 1.5rem; width: 0.3rem; height: 3rem; }
+.bottomLine { bottom: 1.5rem; width: 3rem; height: 0.3rem; }
+.leftLine { left: 1.5rem; width: 0.3rem; height: 3rem; }
+
+/* HPバーコンテナ - 戦況ディスプレイ */
+.hpBarContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end; /* 下揃え */
+  margin-bottom: 2rem;
+  gap: 1.5rem; /* 間隔を広げる */
+}
+
+.playerBox, .bossBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative; /* バトルエフェクト用 */
+  padding: 0.8rem;
+  border-radius: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 8px rgba(0, 229, 255, 0.2);
+}
+
+.avatar {
+  width: 6rem; /* アバターを大きく */
+  height: 6rem;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0.75rem;
+  border: 4px solid; /* ボーダーの色は後で指定 */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); /* アバターも光らせる */
+}
+
+.bossAvatar { border-color: #ff3b71; box-shadow: 0 0 15px rgba(255, 59, 113, 0.6); } /* ボスは赤系統 */
+.userAvatar { border-color: #6a00ff; box-shadow: 0 0 15px rgba(106, 0, 255, 0.6); } /* ユーザーは紫系統 */
+
+.name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.bossName { color: #ff6b9a; }
+.userName { color: #a36bff; }
+
+.hpBar {
+  width: 7rem; /* HPバーを長く */
+  height: 1rem; /* HPバーを太く */
+  background: rgba(255, 255, 255, 0.2); /* 半透明の背景 */
+  border-radius: 0.5rem;
+  overflow: hidden; /* 中身がはみ出さないように */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.hpBarFill {
+  height: 100%;
+  border-radius: 0.5rem;
+  transition: width 0.8s ease-out; /* より滑らかなアニメーション */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.bossHpBarFill { background: linear-gradient(to right, #cc0000, #ff6b9a); }
+.userHpBarFill { background: linear-gradient(to right, #8a00ff, #a36bff); }
+
+.hpText {
+  font-size: 0.9rem;
+  color: #c0c0c0;
+  margin-top: 0.3rem;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* 問題番号と問題文 - ディスプレイの表示 */
+.questionNumber {
+  font-size: 1.3rem;
+  color: #a0a0a0;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.05em;
+}
+
+.questionBox {
+  font-size: 1.6rem; /* 大きな文字 */
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 2.5rem;
+  padding: 1.5rem;
+  background: rgba(30, 0, 60, 0.7); /* 暗く、透明度の高い背景 */
+  border-radius: 1rem;
+  border: 2px solid #6a00ff; /* 紫のボーダー */
+  box-shadow: 0 0 20px rgba(106, 0, 255, 0.4), inset 0 0 10px rgba(106, 0, 255, 0.2);
+  line-height: 1.5; /* 行間を広げる */
+}
+
+.questionText {
+  color: #00e5ff; /* シアンに光るテキスト */
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.7);
+}
+
+/* 選択肢ボタン - タッチパネル風 */
+.optionGrid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr); /* 縦に1列にする */
+  gap: 1.2rem;
+  margin-bottom: 2.5rem;
+}
+
+.optionButton {
+  width: 100%;
+  padding: 1rem 1.2rem; /* パディングを調整 */
+  border-radius: 0.8rem; /* 少し丸みを抑える */
+  font-size: 1.2rem; /* 大きな文字 */
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  border: 2px solid #6a00ff; /* 紫のボーダー */
+  background: rgba(40, 0, 80, 0.7); /* 暗い紫の背景 */
+  color: #e0e0e0;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 10px rgba(106, 0, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.optionButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.optionButton:hover::before {
+  opacity: 1; /* ホバーで光沢 */
+}
+
+.optionButton:hover {
+  transform: translateY(-3px); /* 浮き上がるエフェクト */
+  border-color: #00e5ff; /* ホバーでシアンに光る */
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.5), 0 5px 15px rgba(0, 0, 0, 0.5);
+  color: #00e5ff; /* ホバーで文字も光る */
+}
+
+.optionButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  filter: grayscale(50%); /* 無効時はグレースケール */
+  transform: none;
+  box-shadow: none;
+  border-color: #555;
+  color: #bbb;
+}
+
+/* 正解・不正解ボタンのスタイル */
+.correct {
+  background: linear-gradient(to right, #00b060, #40e080); /* 明るい緑のグラデーション */
+  border-color: #00ff80;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(0, 255, 128, 0.6);
+}
+
+.wrong {
+  background: linear-gradient(to right, #d00000, #ff4040); /* 鮮やかな赤のグラデーション */
+  border-color: #ff0000;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+}
+
+
+/* フィードバックメッセージ - システムメッセージ */
+.feedbackMessage {
+  margin-top: 2rem;
+  padding: 1.2rem;
+  border-radius: 0.8rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  line-height: 1.4;
+  color: #fff;
+}
+
+.correctFeedback {
+  background: rgba(0, 160, 80, 0.8);
+  border-color: #00e5ff; /* フィードバックもシアンで */
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+}
+
+.wrongFeedback {
+  background: rgba(180, 0, 0, 0.8);
+  border-color: #ff0000;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+}
+
+/* 次の問題へボタン - アクションボタン */
+.nextButton {
+  margin-top: 2.5rem;
+  padding: 1.2rem 3rem; /* 大きなボタン */
+  background: linear-gradient(45deg, #00aaff, #00e5ff); /* 青〜シアンのグラデーション */
+  color: #0a0020; /* 濃い青の文字 */
+  font-weight: 800;
+  font-size: 1.4rem;
+  border-radius: 3rem; /* 丸いボタン */
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.7), 0 8px 20px rgba(0, 0, 0, 0.6);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  letter-spacing: 0.08em;
+  text-transform: uppercase; /* 大文字にする */
+  position: relative;
+  overflow: hidden;
+}
+
+.nextButton::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300%;
+  height: 300%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%) rotate(45deg);
+  transition: all 0.5s ease;
+  opacity: 0;
+}
+
+.nextButton:hover::before {
+  opacity: 1;
+  width: 0;
+  height: 0;
+}
+
+.nextButton:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 0 35px rgba(0, 229, 255, 1), 0 10px 25px rgba(0, 0, 0, 0.8);
+  color: #fff;
+}
+
+.nextButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  background: #555;
+  color: #ccc;
+}
+
+/* ロード画面、エラーメッセージなどの共通スタイルもSF風に調整 */
+.loadingScreen, .errorContainer, .errorMessage {
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  border: 2px solid #00e5ff;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.loadingMessage, .errorTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #00e5ff;
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.7);
+  margin-bottom: 1rem;
+}
+
+.loginButton, .retryButton {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.5rem;
+  background: linear-gradient(45deg, #00aaff, #00e5ff);
+  color: #0a0020;
+  font-weight: 600;
+  border-radius: 2rem;
+  transition: all 0.3s ease;
+}
+
+.loginButton:hover, .retryButton:hover {
+  background: linear-gradient(45deg, #00e5ff, #00aaff);
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.8);
+}

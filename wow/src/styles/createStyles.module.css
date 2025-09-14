@@ -1,0 +1,197 @@
+/* createStyles.module.css */
+
+/* 全体のコンテナ - 宇宙の背景 */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #0a052b 0%, #200a45 50%, #0d0a3d 100%);
+  color: #e0e0e0;
+  font-family: 'Orbitron', sans-serif;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* 背景の星屑アニメーション */
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.1) 1%, transparent 10%),
+              radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.08) 1%, transparent 10%),
+              url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="rgba(255,255,255,0.05)"><circle cx="50" cy="50" r="1" /></svg>');
+  background-size: 800px 800px, 600px 600px, 50px 50px;
+  animation: starfield 200s linear infinite;
+}
+
+@keyframes starfield {
+  from { background-position: 0 0, 0 0, 0 0; }
+  to { background-position: 10000px 10000px, 8000px 8000px, 500px 500px; }
+}
+
+/* メインのコンテンツパネル */
+.mainContent {
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  border: 3px solid #00e5ff;
+  background: rgba(10, 0, 30, 0.6);
+  box-shadow: 0 0 30px rgba(0, 229, 255, 0.6), inset 0 0 15px rgba(0, 229, 255, 0.3);
+  max-width: 36rem;
+  width: 100%;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+}
+
+/* タイトル - ネオン風 */
+.title {
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: #00e5ff;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 15px rgba(0, 229, 255, 0.8), 0 0 5px rgba(0, 229, 255, 0.5);
+  letter-spacing: 0.1em;
+}
+
+/* フォームのスタイル */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* フォームグループ */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+/* ラベルのスタイル */
+.label {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #a36bff;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+/* 入力フィールドのスタイル */
+.input {
+  width: 100%;
+  padding: 0.8rem 1.2rem;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #6a00ff;
+  border-radius: 0.5rem;
+  color: #fff;
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 0 10px rgba(106, 0, 255, 0.2);
+}
+
+.input:focus {
+  border-color: #00e5ff;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5), inset 0 0 10px rgba(0, 229, 255, 0.3);
+}
+
+/* ボタンのスタイル */
+.button {
+  margin-top: 1rem;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(45deg, #00aaff, #00e5ff);
+  color: #0a0020;
+  font-weight: 800;
+  font-size: 1.25rem;
+  border: none;
+  border-radius: 3rem;
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.7), 0 8px 20px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  outline: none;
+}
+
+.button:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 0 35px rgba(0, 229, 255, 1), 0 10px 25px rgba(0, 0, 0, 0.8);
+  color: #fff;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  background: #555;
+  color: #ccc;
+}
+
+/* メッセージのスタイル */
+.message {
+  font-size: 1rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.successMessage {
+  border-color: #00ff80;
+  color: #00ff80;
+  box-shadow: 0 0 10px rgba(0, 255, 128, 0.5);
+}
+
+.errorMessage {
+  border-color: #ff0000;
+  color: #ff0000;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.loadingMessage {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #00e5ff;
+}
+.button {
+  margin-top: 1rem;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(45deg, #00aaff, #00e5ff);
+  color: #0a0020;
+  font-weight: 800;
+  font-size: 1.25rem;
+  border: none;
+  border-radius: 3rem;
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.7), 0 8px 20px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  outline: none;
+}
+
+/* 戻るボタンのスタイル */
+.backButton {
+  margin-top: 2rem; /* 少し間隔を空ける */
+  background: linear-gradient(45deg, #6a00ff, #a36bff); /* 紫系のグラデーション */
+  color: #fff;
+  box-shadow: 0 0 25px rgba(106, 0, 255, 0.7), 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+.button:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 0 35px rgba(0, 229, 255, 1), 0 10px 25px rgba(0, 0, 0, 0.8);
+  color: #fff;
+}
