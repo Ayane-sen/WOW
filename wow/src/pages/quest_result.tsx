@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import clsx from 'clsx'; // clsxをインポート
 
-// APIレスポンスの型定義
+// 新しいCSSファイルをインポート
+import styles from '../styles/questResultStyles.module.css';
+
+// APIレスポンスの型定義 (変更なし)
 interface ExpStatusResponse {
   totalExperienceGained: number; // 獲得した合計経験値
   experience: number; // 更新後の総経験値
@@ -27,8 +31,6 @@ const QuestResultPage: React.FC = () => {
 
   // クエスト完了時の経験値獲得処理
   useEffect(() => {
-    // 認証済みかつクエスト成功時のみ実行
-    // useEffectの依存関係からexpStatusを削除し、無限ループを防ぐ
     if (status === 'authenticated' && questStatus === 'completed' && expStatus === null) {
       const getExp = async () => {
         try {
@@ -56,13 +58,12 @@ const QuestResultPage: React.FC = () => {
     } else {
       setIsLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, questStatus, session?.user?.id, JSON.stringify(difficulties)]);
+  }, [status, questStatus, session?.user?.id, JSON.stringify(difficulties), expStatus]);
 
   if (isLoading || status === 'loading') {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-pink-100 to-pink-300">
-        <div className="text-pink-800 text-2xl font-bold rounded-lg p-6 bg-white shadow-lg animate-pulse">
+      <div className={styles.container}>
+        <div className={clsx(styles.loadingMessage, 'animate-pulse')}>
           {status === 'loading' ? 'セッションを読み込み中... ⏳' : '結果を計算中... 📊'}
         </div>
       </div>
@@ -71,9 +72,9 @@ const QuestResultPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-pink-100 to-pink-300 p-4">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg text-center">
-          <p className="font-bold mb-2">エラーが発生しました！</p>
+      <div className={styles.container}>
+        <div className={styles.errorContainer}>
+          <p className={clsx(styles.errorTitle, 'font-bold', 'mb-2')}>エラーが発生しました！</p>
           <p>{error}</p>
         </div>
       </div>
@@ -83,13 +84,15 @@ const QuestResultPage: React.FC = () => {
   const isSuccess = questStatus === 'completed';
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-pink-100 to-pink-300 p-4 font-inter text-pink-900">
-      <div className="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full text-center border-4 border-pink-400">
-        <h1 className="text-5xl font-extrabold mb-4 drop-shadow-md">
-          {isSuccess ? 'クエスト成功！🎉' : 'クエスト失敗...😢'}
+    <div className={styles.container}>
+      <div className={styles.mainContent}>
+        <h1 className={styles.title}>
+          <span className={styles.titleQuest}>クエスト</span>
+          <br />
+          <span className={styles.titleSuccess}>成功！🎉</span>
         </h1>
 
-        <p className="text-xl font-medium mb-6">
+        <p className={styles.subtitle}>
           {isSuccess ? (
             `強敵「${bossName}」を打ち破りました！おめでとうございます！`
           ) : (
@@ -98,16 +101,16 @@ const QuestResultPage: React.FC = () => {
         </p>
 
         {isSuccess && expStatus && (
-          <div className="bg-pink-50 p-6 rounded-lg my-6 border border-pink-200">
-            <h2 className="text-3xl font-bold text-pink-700 mb-2">報酬</h2>
-            <p className="text-xl font-semibold text-green-600">
+          <div className={clsx(styles.resultPanel, styles.successPanel)}>
+            <h2 className={clsx(styles.rewardTitle, 'mb-2')}>報酬</h2>
+            <p className={styles.expText}>
               獲得経験値: {expStatus.totalExperienceGained} EXP ✨
             </p>
-            <p className="text-lg mt-2">
+            <p className={clsx('text-lg', 'mt-2')}>
               あなたの現在の経験値: {expStatus.experience}
             </p>
             {expStatus.leveledUp && (
-              <p className="text-xl font-bold text-purple-600 mt-2">
+              <p className={styles.levelUpText}>
                 レベルアップ！現在のレベル: {expStatus.level} 🚀
               </p>
             )}
@@ -115,20 +118,20 @@ const QuestResultPage: React.FC = () => {
         )}
 
         {!isSuccess && (
-          <div className="bg-red-50 p-6 rounded-lg my-6 border border-red-200">
-            <h2 className="text-3xl font-bold text-red-700 mb-2">結果</h2>
-            <p className="text-lg">
+          <div className={clsx(styles.resultPanel, styles.failurePanel)}>
+            <h2 className={clsx(styles.rewardTitle, 'text-red-700', 'mb-2')}>結果</h2>
+            <p className={clsx('text-lg')}>
               {bossName} のHP: {bossFinalHp}
             </p>
-            <p className="text-lg">
+            <p className={clsx('text-lg')}>
               あなたのHP: {userFinalHp}
             </p>
           </div>
         )}
 
         <button
-          onClick={() => router.push('/')} // トップページに戻るなど、任意のページに遷移
-          className="mt-8 px-8 py-4 bg-pink-600 text-white font-bold text-xl rounded-full shadow-lg hover:bg-pink-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-pink-300"
+          onClick={() => router.push('/')}
+          className={styles.button}
         >
           メニューに戻る 🏠
         </button>
