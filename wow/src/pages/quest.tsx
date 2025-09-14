@@ -276,7 +276,7 @@ const QuestPage: React.FC = () => {
           <span className="text-2xl font-bold text-gray-400">VS</span>
 
           <div className={styles.playerBox}>
-            <img src={userStatus.characterImage || 'https://placehold.co/80x80/800080/FFFFFF?text=YOU'} alt="あなたのキャラ" className={clsx(styles.avatar, styles.userAvatar)} />
+            <img src={'/images/characterDefault.gif'} alt="あなたのキャラ" className={clsx(styles.avatar, styles.userAvatar)} />
             <p className={clsx(styles.name, styles.userName)}>あなた (Lv.{userStatus.currentLevel})</p>
             <div className={styles.hpBar}>
               <div
