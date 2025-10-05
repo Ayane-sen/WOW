@@ -8,6 +8,7 @@ import { DefaultSession, DefaultJWT } from "next-auth";
        */
       interface Session {
         user?: {
+          gachapoint: number;
           id: string; // **追加: ユーザーIDの型をstringとして定義**
         } & DefaultSession["user"]; // DefaultSessionのuserプロパティを継承
       }
@@ -17,6 +18,7 @@ import { DefaultSession, DefaultJWT } from "next-auth";
        * これにより、`token.id` にアクセスできるようになります。
        */
       interface JWT extends DefaultJWT {
+        gachapoint: number;
         id?: string; // **追加: JWTトークンにユーザーIDの型を定義**
       }
     }
