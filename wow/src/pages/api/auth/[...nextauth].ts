@@ -51,7 +51,7 @@ export const authOptions: NextAuthOptions = {
         // ユーザーが存在し、かつパスワードが一致するか検証
         if (isPasswordCorrect) {
           console.log('認証成功！');
-          return { id: user.id.toString(), name: user.username, email: user.email };
+          return { id: user.id.toString(), name: user.username, email: user.email ,gachapoint: user.gachapoint};
         } else {
           console.log('認証失敗：パスワードが一致しません。');
           return null;
