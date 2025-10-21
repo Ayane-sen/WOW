@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { ImageAnnotatorClient, protos } from '@google-cloud/vision';
 import { Translate } from '@google-cloud/translate/build/src/v2';
 
-type LabelAnnotation = protos.google.cloud.vision.v1.ILabelAnnotation;
+type LabelAnnotation = protos.google.cloud.vision.v1.IEntityAnnotation;
 
 const client = new ImageAnnotatorClient();
 const translateClient = new Translate();
