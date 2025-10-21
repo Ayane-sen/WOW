@@ -42,6 +42,10 @@ export default async function handler(
                 where: { id: Number(userId) },
                 select: { gachapoint: true }
             });
+            // ユーザーが見つからない場合はエラーを返す
+            if (!user) {
+                return res.status(404).json({ error: 'ユーザーが見つかりません' });
+            }
             // ポイントが足りない場合はエラーを返す
             if (user.gachapoint < GACHA_COST) {
                 return res.status(402).json({ error: 'ポイントが足りません' });
@@ -102,7 +106,10 @@ export default async function handler(
             );
 
             // トランザクションを実行
-            const [updatedUser, updatedUserItem, gachaHistory] = await prisma.$transaction(transactionActions);
+            const results = await prisma.$transaction(transactionActions);
+            const updatedUser = results[0] as { gachapoint: number };
+            const updatedUserItem = results[1];
+            const gachaHistory = results[2];
 
             // 成功レスポンスを返す
             res.status(200).json({
