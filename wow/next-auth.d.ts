@@ -2,10 +2,11 @@ import { DefaultSession, DefaultJWT } from "next-auth";
 
     // NextAuth.jsのデフォルトの型定義を拡張
     declare module "next-auth" {
-      /**
-       * `Session` オブジェクトの `user` プロパティの型を拡張します。
-       * これにより、`session.user.id` にアクセスできるようになります。
-       */
+
+      interface User extends DefaultUser {
+        gachapoint: number; // Userオブジェクトに gachapoint を追加
+        id: string; // AdapterUserから継承されるが、明示的に含めてもOK
+      }
       interface Session {
         user?: {
           gachapoint: number;
