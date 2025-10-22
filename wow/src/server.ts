@@ -30,6 +30,8 @@ app.get('/api/question', authenticateToken, getQuizData);
 app.listen(port, () => {
     console.log(`Express server running on http://localhost:${port}`);
     console.log(`API URL: http://localhost:${port}/api/...`);
+    const secretStatus = process.env.JWT_SECRET ? "✅ SET" : "❌ NOT SET";
+    console.log(`[DEBUG] JWT_SECRET Status: ${secretStatus}`);
 });
 
 // 環境変数などが読み込まれているか確認してから起動してください
