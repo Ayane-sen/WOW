@@ -6,6 +6,9 @@ import cors from 'cors'; // Unity WebGLからのリクエストを許可する�
 import { unityLogin } from './controllers/authController';
 import { getQuizData } from './controllers/quizController';
 import { authenticateToken } from './middleware/authMiddleware';
+import { addWord } from './controllers/createController';
+import { getUserWords } from './controllers/get_wordController';
+import { deleteWord } from './controllers/deletewordController';
 
 const app = express();
 const port = 3000;
@@ -21,10 +24,10 @@ app.use(express.json());
 
 // ログインAPI (POST) : 認証は不要
 app.post('/api/login', unityLogin);
-
-// クイズAPI (GET) : 認証ミドルウェアを適用
-// まず authenticateToken が実行され、認証が通れば getQuizData が実行される
 app.get('/api/question', authenticateToken, getQuizData);
+app.post('/api/addword', authenticateToken, addWord);
+app.get('/api/getwords', authenticateToken, getUserWords);
+app.delete('/api/delete_word/:id', authenticateToken, deleteWord);
 
 
 app.listen(port, () => {
