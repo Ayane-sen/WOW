@@ -9,6 +9,7 @@ import { authenticateToken } from './middleware/authMiddleware';
 import { addWord } from './controllers/createController';
 import { getUserWords } from './controllers/get_wordController';
 import { deleteWord } from './controllers/deletewordController';
+import quizRouter from './routes/quizRoutes';
 
 const app = express();
 const port = 3000;
@@ -28,6 +29,7 @@ app.get('/api/question', authenticateToken, getQuizData);
 app.post('/api/addword', authenticateToken, addWord);
 app.get('/api/getwords', authenticateToken, getUserWords);
 app.delete('/api/delete_word/:id', authenticateToken, deleteWord);
+app.use('/api', quizRouter);
 
 
 app.listen(port, () => {
