@@ -38,6 +38,7 @@ function shuffleArray<T>(array: T[]): T[] {
 export const getQuizData = async (req: Request, res: Response) => {
     // ミドルウェアでGETリクエストと認証済みであることを前提とします
     const userIdInt = req.userId;
+    console.log("Authenticated userId:", userIdInt);
 
     // ミドルウェアが正常なら認証済み。もしuserIdがない場合は内部エラー。
     if (!userIdInt) {

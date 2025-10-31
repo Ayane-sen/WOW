@@ -61,7 +61,7 @@ export const unityLogin = async (req: Request, res: Response) => {
         // 4. 認証成功 -> JWTトークンの生成
         const token = jwt.sign(
             // payload: user.id (PrismaのIDは型に注意)
-            { id: Number(user.id) }, 
+            { userId: Number(user.id) }, 
             JWT_SECRET, 
             { expiresIn: '1h' } // トークンの有効期限
         );
@@ -71,7 +71,8 @@ export const unityLogin = async (req: Request, res: Response) => {
             token: token,
             username: user.username,
             // userCharacterがない場合を考慮
-            level: user.userCharacter?.level || 1 
+            level: user.userCharacter?.level || 1 ,
+            userId: user.id.toString()
         });
 
     } catch (error) {
