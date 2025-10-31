@@ -16,6 +16,7 @@ declare global {
  */
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
+    console.log(`[DEBUG AUTH] Received Authorization Header: ${authHeader}`);
     
     if (!authHeader?.startsWith("Bearer ")) {
         return res.status(401).json({ error: "認証が必要です: Bearerトークンを使用してください。" });
@@ -25,10 +26,10 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
 
     try {
         // JWT_SECRETはExpress環境のprocess.envに設定されている必要
-        const payload = jwt.verify(token, process.env.JWT_SECRET!) as { id: number };
+        const payload = jwt.verify(token, process.env.JWT_SECRET!) as { userId: number };
         
         // 検証成功: userIdをリクエストオブジェクトに格納
-        req.userId = payload.id;
+        req.userId = payload.userId;
         next();
     } catch (error: any) {
         console.warn(`JWT検証失敗: ${error.message}`);

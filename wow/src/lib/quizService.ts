@@ -63,6 +63,9 @@ interface QuizResult {
 export async function generateQuizzes(userId: string): Promise<QuizResult[]> {
     const QUIZ_COUNT = 5;
     const numericUserId = parseInt(userId, 10);
+    if (isNaN(numericUserId)) {
+        throw new Error("Invalid userId");
+    }
     
     // ユーザーの単語
     const userWords: Word[] = await prisma.word.findMany({
