@@ -15,11 +15,15 @@ import prisma from '../lib/prisma';
  * BigInt型の値をJSONでシリアライズするためのヘルパー関数。
  */
 function serializeBigInt(obj: any): any {
+  if (obj === null || typeof obj === "undefined") {
+    return obj;
+  }
+  
   if (typeof obj === "bigint") {
     return obj.toString();
   } else if (Array.isArray(obj)) {
     return obj.map(serializeBigInt);
-  } else if (obj && typeof obj === "object") {
+  } else if (typeof obj === "object") {
     const result: any = {};
     for (const [key, value] of Object.entries(obj)) {
       result[key] = serializeBigInt(value);
@@ -432,14 +436,27 @@ export const getQuestResultHandler = async (req: Request, res: Response) => {
     };
 
     // レスポンスペイロードを構築
-    return res.status(200).json(serializeBigInt({
-      questSessionId: questSession.id,
-      questStatus: questSession.questStatus, // "completed" or "failed"
-      finalBossHp: questSession.bossCurrentHp,
-      finalUserHp: questSession.userCurrentHp,
-      bossName: questSession.boss.name,
-      finalUserCharacterStatus: finalUserCharacterStatus, // ユーザーの最終ステータス
-    }));
+    const payload = {
+        questSessionId: questSession.id,
+        questStatus: questSession.questStatus, // "completed" or "failed"
+        finalBossHp: questSession.bossCurrentHp,
+        finalUserHp: questSession.userCurrentHp,
+        bossName: questSession.boss.name,
+        finalUserCharacterStatus: finalUserCharacterStatus, // ユーザーの最終ステータス
+    };
+
+    const finalResponse = serializeBigInt(payload);
+    
+    // 💡 デバッグログ: クライアントに何を返すかを確認 (空のJSONを防ぐため)
+    console.log("DEBUG: Final Result Payload (Serialized):", JSON.stringify(finalResponse).substring(0, 200));
+
+    // 念のため、最終レスポンスが空でないか確認
+    if (Object.keys(finalResponse).length === 0) {
+        console.error("FATAL: Serialized response is empty.");
+        return res.status(500).json({ error: 'サーバーが空のレスポンスを返しました。' });
+    }
+
+    return res.status(200).json(finalResponse);
 
   } catch (error: any) {
     console.error("Failed to get quest result:", error);

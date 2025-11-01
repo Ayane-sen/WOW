@@ -19,6 +19,14 @@ const port = 3000;
 // 開発中は全て許可しますが、本番ではUnityホストのオリジンに限定すべきです
 app.use(cors());
 
+app.use((req, res, next) => {
+    // 接続維持の強制
+    res.set('Connection', 'keep-alive');
+    // クライアントに送るJSONの文字コードを明示 (通常 express.json() が行いますが、念のため)
+    res.set('Content-Type', 'application/json; charset=utf-8'); 
+    next();
+});
+
 // リクエストボディをJSONとしてパースする
 app.use(express.json()); 
 
