@@ -29,14 +29,23 @@ export const deleteWord = async (req: Request, res: Response) => {
     }
 
     try {
-        // 3. 単語を削除
-        // ユーザーIDと単語IDが一致するレコードのみを削除（セキュリティのため重要）
-        const result = await prisma.word.deleteMany({
-            where: { id: wordId, userId: userIdInt }
-        });
+        // 単語を削除
+        const [historyDeleteResult, wordDeleteResult] = await prisma.$transaction([
+            
+            // 削除対象の単語IDとユーザーIDに紐づくクイズ履歴を削除
+            prisma.quizHistory.deleteMany({
+                where: {
+                    wordId: wordId,
+                },
+            }),
 
+            // B. その後、単語自体を削除
+            prisma.word.deleteMany({
+                where: { id: wordId, userId: userIdInt }
+            }),
+        ]);
         // 4. 成功レスポンス
-        if (result.count === 0) {
+        if (wordDeleteResult.count === 0) {
              // 削除対象の単語が見つからない、または認証済みユーザーの単語ではない場合
              return res.status(404).json({ error: "指定された単語が見つからないか、削除する権限がありません。" });
         }
