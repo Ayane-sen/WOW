@@ -11,6 +11,7 @@ import { getUserWords } from './controllers/get_wordController';
 import { deleteWord } from './controllers/deletewordController';
 import quizRouter from './routes/quizRoutes';
 import { startQuestHandler, answerQuestHandler, getQuestResultHandler } from './controllers/questRoute';
+import { getRankingHandler } from './controllers/rankingcontroller';
 
 const app = express();
 const port = 3000;
@@ -45,6 +46,10 @@ questRouter.get('/start', authenticateToken, startQuestHandler);
 questRouter.post('/answer', authenticateToken, answerQuestHandler);
 questRouter.get('/result', authenticateToken, getQuestResultHandler);
 app.use('/quest', questRouter);
+
+const rankingRouter = express.Router();
+rankingRouter.get('/', getRankingHandler);
+app.use('/ranking', rankingRouter);
 
 
 app.listen(port, () => {
