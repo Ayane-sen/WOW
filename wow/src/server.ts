@@ -12,6 +12,7 @@ import { deleteWord } from './controllers/deletewordController';
 import quizRouter from './routes/quizRoutes';
 import { startQuestHandler, answerQuestHandler, getQuestResultHandler } from './controllers/questRoute';
 import { getRankingHandler } from './controllers/rankingcontroller';
+import { ocrHandler } from './controllers/ocrController';
 
 const app = express();
 const port = 3000;
@@ -19,6 +20,8 @@ const port = 3000;
 // CORS設定：Unity WebGLからのアクセスを許可
 // 開発中は全て許可しますが、本番ではUnityホストのオリジンに限定すべきです
 app.use(cors());
+
+app.use(express.json({ limit: '4mb' }));
 
 app.use((req, res, next) => {
     // 接続維持の強制
@@ -50,6 +53,8 @@ app.use('/quest', questRouter);
 const rankingRouter = express.Router();
 rankingRouter.get('/', getRankingHandler);
 app.use('/ranking', rankingRouter);
+
+app.post('/api/ocr', ocrHandler);
 
 
 app.listen(port, () => {
