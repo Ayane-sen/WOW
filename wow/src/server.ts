@@ -10,6 +10,7 @@ import { addWord } from './controllers/createController';
 import { getUserWords } from './controllers/get_wordController';
 import { deleteWord } from './controllers/deletewordController';
 import quizRouter from './routes/quizRoutes';
+import { startQuestHandler, answerQuestHandler, getQuestResultHandler } from './controllers/questRoute';
 
 const app = express();
 const port = 3000;
@@ -17,6 +18,14 @@ const port = 3000;
 // CORS設定：Unity WebGLからのアクセスを許可
 // 開発中は全て許可しますが、本番ではUnityホストのオリジンに限定すべきです
 app.use(cors());
+
+app.use((req, res, next) => {
+    // 接続維持の強制
+    res.set('Connection', 'keep-alive');
+    // クライアントに送るJSONの文字コードを明示 (通常 express.json() が行いますが、念のため)
+    res.set('Content-Type', 'application/json; charset=utf-8'); 
+    next();
+});
 
 // リクエストボディをJSONとしてパースする
 app.use(express.json()); 
@@ -30,6 +39,12 @@ app.post('/api/addword', authenticateToken, addWord);
 app.get('/api/getwords', authenticateToken, getUserWords);
 app.delete('/api/delete_word/:id', authenticateToken, deleteWord);
 app.use('/api', quizRouter);
+
+const questRouter = express.Router();
+questRouter.get('/start', authenticateToken, startQuestHandler);
+questRouter.post('/answer', authenticateToken, answerQuestHandler);
+questRouter.get('/result', authenticateToken, getQuestResultHandler);
+app.use('/quest', questRouter);
 
 
 app.listen(port, () => {

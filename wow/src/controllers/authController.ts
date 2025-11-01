@@ -4,9 +4,7 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 // ★修正: Prisma Clientのインポート★
-import { PrismaClient } from '@/generated/prisma'; 
-
-const prisma = new PrismaClient(); // Prisma Clientのインスタンス化
+import prisma from '../lib/prisma'; 
 
 /**
  * ログイン処理 (POST /api/login)
